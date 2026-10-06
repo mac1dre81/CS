@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- key bow -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,6 m-2.8,0 a2.8,2.8 0 1,1 5.6,0 a2.8,2.8 0 1,1 -5.6,0 Z" />
+    <!-- shaft -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 10.5,8.8 H 13.5 V 18 H 10.5 Z" />
+    <!-- biting -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 7,18 H 17 V 19.6 H 7 Z" />
+    <!-- teeth -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 7,19.8 H 8.6 V 21.6 H 7 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 15.4,19.8 H 17 V 21.6 H 15.4 Z" />
+</vector>

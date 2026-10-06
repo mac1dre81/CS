@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+    <dimen name="key_list_item_height">72dp</dimen>
+    <dimen name="provider_badge_size">32dp</dimen>
+    <dimen name="icon_button_size">40dp</dimen>
+</resources>

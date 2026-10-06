@@ -1,0 +1,88 @@
+package com.keyvault.app.prefs
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import kotlinx.coroutines.flow.first
+import com.keyvault.app.core.AppConst
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+/**
+ * Thin DataStore-backed settings store. Holds non-secret UX toggles plus the
+ * set of purchased product IDs (the single source of truth for "is Pro").
+ */
+class SettingsRepository(private val store: DataStore<Preferences>) {
+
+    val isPro: Flow<Boolean> = store.data
+        .map { it[Keys.PurchasedProductIds]?.contains(AppConst.PRO_PRODUCT_ID) == true }
+
+    val onboardingCompleted: Flow<Boolean> = store.data
+        .map { it[Keys.OnboardingCompleted] ?: false }
+
+    val clipboardAutoClearSeconds: Flow<Int> = store.data
+        .map { it[Keys.ClipboardAutoClearSeconds] ?: AppConst.CLIPBOARD_AUTO_CLEAR_DEFAULT_SECONDS }
+
+    val biometricLockEnabled: Flow<Boolean> = store.data
+        .map { it[Keys.BiometricLockEnabled] ?: false }
+
+    /** In-app text-size multiplier (accessibility). 1.0f == system default. */
+    val fontScale: Flow<Float> = store.data
+        .map { it[Keys.FontScale] ?: AppConst.FONT_SCALE_DEFAULT }
+
+    /** Last key-count milestone a free interstitial was shown for (0 = none yet). */
+    val lastInterstitialMilestone: Flow<Int> = store.data
+        .map { it[Keys.LastInterstitialMilestone] ?: 0 }
+
+    /** Epoch-ms of the last shown interstitial (for the session/cooldown rule). */
+    val lastInterstitialShownAt: Flow<Long> = store.data
+        .map { it[Keys.LastInterstitialShownAt] ?: 0L }
+
+    suspend fun isProNow(): Boolean = isPro.first()
+
+    suspend fun setOnboardingCompleted(value: Boolean) {
+        store.edit { it[Keys.OnboardingCompleted] = value }
+    }
+
+    suspend fun setClipboardAutoClearSeconds(seconds: Int) {
+        store.edit { it[Keys.ClipboardAutoClearSeconds] = seconds }
+    }
+
+    suspend fun setBiometricLockEnabled(value: Boolean) {
+        store.edit { it[Keys.BiometricLockEnabled] = value }
+    }
+
+    suspend fun setFontScale(scale: Float) {
+        store.edit { it[Keys.FontScale] = scale }
+    }
+
+    suspend fun setLastInterstitialMilestone(value: Int) {
+        store.edit { it[Keys.LastInterstitialMilestone] = value }
+    }
+
+    suspend fun setLastInterstitialShownAt(value: Long) {
+        store.edit { it[Keys.LastInterstitialShownAt] = value }
+    }
+
+    suspend fun setPurchasedProductIds(ids: Set<String>) {
+        store.edit { it[Keys.PurchasedProductIds] = ids }
+    }
+
+    suspend fun getPurchasedProductIds(): Set<String> =
+        store.data.first()[Keys.PurchasedProductIds] ?: emptySet()
+
+    object Keys {
+        val OnboardingCompleted = booleanPreferencesKey("onboarding_completed")
+        val ClipboardAutoClearSeconds = intPreferencesKey("clipboard_auto_clear_seconds")
+        val BiometricLockEnabled = booleanPreferencesKey("biometric_lock_enabled")
+        val LastInterstitialMilestone = intPreferencesKey("last_interstitial_milestone")
+        val LastInterstitialShownAt = longPreferencesKey("last_interstitial_shown_at")
+        val FontScale = floatPreferencesKey("font_scale")
+        val PurchasedProductIds = stringSetPreferencesKey("purchased_product_ids")
+    }
+}

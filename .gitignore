@@ -1,0 +1,38 @@
+# Gradle
+.gradle/
+build/
+gradle-8.10.2/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.navigation/
+
+# Kotlin
+.kotlin/
+
+# Local config
+local.properties
+
+# Logs and AI history
+*.log
+.aider.chat.history.md
+
+# Native build
+.externalNativeBuild
+.cxx/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Stray AAR extraction artifacts at project root (remove these lines
+# later if you actually need them at root)
+/AndroidManifest.xml
+/R.txt
+/classes.jar
+/lint.jar
+/public.txt
+/res/
+/baseline-prof.txt
