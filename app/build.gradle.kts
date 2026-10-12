@@ -47,7 +47,7 @@ android {
             if (propsFile.exists()) {
                 val props = Properties()
                 FileInputStream(propsFile).use { props.load(it) }
-                storeFile = file(props.getProperty("MYAPP_STORE_FILE")!!)
+                storeFile = rootProject.file(props.getProperty("MYAPP_STORE_FILE")!!)
                 storePassword = props.getProperty("MYAPP_STORE_PASSWORD")!!
                 keyAlias = props.getProperty("MYAPP_KEY_ALIAS")!!
                 keyPassword = props.getProperty("MYAPP_KEY_PASSWORD")!!
