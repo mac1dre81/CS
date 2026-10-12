@@ -341,11 +341,6 @@ fun SettingsScreen(
                 },
             )
             SettingsRow(
-                title = "Refresh purchases",
-                enabled = true,
-                onClick = { vm.refreshPro() },
-            )
-            SettingsRow(
                 title = stringResource(R.string.settings_redeem_title),
                 subtitle = stringResource(R.string.settings_redeem_summary),
                 icon = Icons.Default.Star,
