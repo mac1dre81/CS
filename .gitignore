@@ -14,6 +14,8 @@ captures/
 
 # Local config
 local.properties
+keystore.properties
+app/google-services.json
 
 # Logs and AI history
 *.log

@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.keyvault.app">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- AdMob needs network access to fetch banner ads (test ads only). -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".KeyVaultApp"
+        android:name=".CredStowApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.KeyVault">
+        android:theme="@style/Theme.CredStow">
         <!-- AdMob application ID. The value below is Google's sample/test ID;
              replace it with your real AdMob app ID before publishing. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_test_app_id" />
 
+        <!-- Displays the bundled (offline) privacy policy in a self-contained WebView. -->
+        <activity
+            android:name=".ui.PrivacyPolicyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CredStow"
+            android:parentActivityName=".MainActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.KeyVault"
+            android:theme="@style/Theme.CredStow"
             android:resizeableActivity="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -29,6 +35,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Quick Settings tile for one-tap key copying -->
+        <service
+            android:name=".ui.QuickSettingsTileService"
+            android:icon="@drawable/ic_qs_tile"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Lightweight key picker launched from the QS tile -->
+        <activity
+            android:name=".ui.TileCopyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CredStow.Splash" />
     </application>
 
 </manifest>
+

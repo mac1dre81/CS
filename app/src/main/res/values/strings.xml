@@ -1,12 +1,17 @@
 <resources>
     <!-- App -->
-    <string name="app_name">KeyVault</string>
+    <string name="app_name">CredStow</string>
+
+    <!-- Quick Settings tile -->
+    <string name="qs_tile_label">CredStow</string>
+    <string name="qs_tile_subtitle">Tap to copy a key</string>
+    <string name="lock_screen_prompt">Unlock CredStow to copy a key</string>
 
     <!-- Splash -->
     <string name="splash_tagline">All your AI keys. One secure place.</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_title">Welcome to KeyVault</string>
+    <string name="onboarding_title">Welcome to CredStow</string>
     <string name="onboarding_subtitle">Store, organize, and test your AI API keys — securely, on device.</string>
     <string name="onboarding_free">Free • Up to 3 keys</string>
     <string name="onboarding_pro">Pro • Unlimited keys</string>
@@ -14,6 +19,11 @@
 
     <!-- Key list -->
     <string name="list_empty_title">No API keys yet</string>
+    <string name="list_no_results_title">No matching keys</string>
+    <string name="list_no_results_subtitle">Try adjusting your search or filter criteria</string>
+    <string name="list_clear_filters">Clear filters</string>
+    <string name="snackbar_key_deleted">Key deleted</string>
+    <string name="snackbar_undo">Undo</string>
     <string name="list_empty_subtitle">Tap “+” to add your first key. Your keys stay on this device.</string>
     <string name="list_add_key">Add key</string>
     <string name="list_search_hint">Search keys…</string>
@@ -48,6 +58,7 @@
     <string name="detail_copied">Key copied to clipboard. It will be cleared automatically.</string>
     <string name="detail_delete">Delete</string>
     <string name="detail_delete_confirm">Delete “%1$s”?</string>
+    <string name="detail_loading">Loading…</string>
     <string name="detail_test">Test key</string>
     <string name="detail_test_pro">Test ping requires Pro</string>
     <string name="detail_test_running">Testing key…</string>
@@ -62,28 +73,35 @@
     <string name="settings_title">Settings</string>
     <string name="settings_biometric">Biometric lock</string>
     <string name="settings_biometric_hint">Require biometric or device credential to open the app</string>
+    <string name="settings_auto_lock_title">Auto-lock after</string>
+    <string name="settings_auto_lock_never">Never auto-lock</string>
+    <string name="settings_auto_lock_summary">%1$s min · requires biometric lock</string>
     <string name="settings_auto_clear">Auto-clear clipboard (%1$s sec)</string>
     <string name="settings_auto_clear_custom">Custom auto-clear…</string>
     <string name="settings_export">Export backup</string>
     <string name="accessibility_font_size">Font size</string>
     <string name="accessibility_font_size_summary">%1$s&#215; text size</string>
-    <string name="accessibility_system">System accessibility</string>
-    <string name="accessibility_system_hint">Open Android accessibility, font, and display settings</string>
+    <string name="display_system">Display settings</string>
+    <string name="display_system_hint">Open Android display and font-size settings</string>
     <string name="settings_import">Import backup</string>
     <string name="settings_privacy">Privacy policy</string>
-    <string name="privacy_policy_url">https://example.com/keyvault-privacy</string>
-    <string name="settings_pro_title">KeyVault Pro</string>
+    <!-- The app now bundles its privacy policy in assets/ and renders it
+         offline via PrivacyPolicyActivity, so no external URL is needed at runtime.
+         This string is retained for reference — when you publish to the Play
+         Console, enter your real hosted policy URL in the store listing. -->
+    <string name="privacy_policy_url">https://example.com/CredStow-privacy</string>
+    <string name="settings_pro_title">CredStow Pro</string>
     <string name="settings_pro_body">One-time purchase · Unlimited keys · Key testing · Backup &amp; restore</string>
     <string name="settings_pro_price">\$4.99</string>
     <string name="settings_pro_unlocked">Pro features unlocked</string>
     <string name="settings_pro_upgrade">Upgrade to Pro</string>
-    <string name="biometric_prompt_title">Unlock KeyVault</string>
+    <string name="biometric_prompt_title">Unlock CredStow</string>
     <string name="biometric_prompt_subtitle">Scan your fingerprint or face, or use your device credential</string>
 
     <!-- Backup -->
     <string name="backup_password_hint">Choose a backup password (min 8 characters)</string>
     <string name="backup_password_error_min">Password must be 8–64 characters</string>
-    <string name="backup_label">KeyVault encrypted backup</string>
+    <string name="backup_label">CredStow encrypted backup</string>
     <string name="backup_copied">Encrypted backup copied to clipboard. Paste it into a secure file to keep it.</string>
     <string name="import_paste_blob_hint">Paste your encrypted backup blob</string>
     <string name="import_password_hint">Backup password</string>
@@ -130,3 +148,4 @@
          before publishing. No interstitials are shown to Pro users. -->
     <string name="admob_test_interstitial">ca-app-pub-3940256099942544/1033600233</string>
 </resources>
+

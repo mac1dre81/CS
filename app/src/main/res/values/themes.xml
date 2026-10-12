@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.KeyVault" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.CredStow" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/splash_bg</item>
         <item name="android:statusBarColor">@color/splash_bg</item>
         <item name="colorPrimary">@color/md_theme_light_primary</item>
@@ -7,8 +7,9 @@
     </style>
 
     <!-- Initial launch theme: shows the splash background while Compose starts. -->
-    <style name="Theme.KeyVault.Splash" parent="Theme.KeyVault">
+    <style name="Theme.CredStow.Splash" parent="Theme.CredStow">
         <item name="android:windowBackground">@color/splash_bg</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 </resources>
+

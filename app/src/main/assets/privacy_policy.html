@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — CredStow</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         line-height: 1.6; color: #1e293b; max-width: 42rem; margin: 0 auto; padding: 1.5rem; }
+  h1 { font-size: 1.6rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: .5rem; margin-top: 2rem; }
+  h1:first-child { margin-top: 0; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin-top: 1.75rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.25rem; }
+  p { margin: .75rem 0; }
+  ul { margin: .5rem 0; padding-left: 1.5rem; }
+  li { margin: .25rem 0; }
+  .muted { color: #64748b; font-size: .9rem; }
+  .tag { display: inline-block; background: #eff6ff; color: #1d4ed8; padding: .1rem .5rem;
+         border-radius: .25rem; font-size: .8rem; font-weight: 600; }
+  code { background: #f1f5f9; padding: .1rem .3rem; border-radius: .2rem; font-size: .85em; }
+  .warn { background: #fffbeb; border-left: 3px solid #f59e0b; padding: .75rem 1rem; margin: 1rem 0; }
+  .ok  { background: #ecfdf5; border-left: 3px solid #10b981; padding: .75rem 1rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+
+<h1>CredStow Privacy Policy <span class="tag">Effective: October 2026</span></h1>
+
+<p class="muted">
+  CredStow (&ldquo;the app&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) is an Android
+  application that securely stores and optionally validates your AI API keys —
+  such as those for OpenAI, Anthropic, Google Gemini, and others — entirely on
+  your device.
+</p>
+
+<p>
+  This policy explains what information the app collects, how it is protected,
+  and with whom it is (or is not) shared. Our guiding principle is simple:
+  <strong>your API keys and their metadata never leave your device unless you
+  explicitly initiate an action that requires it.</strong>
+</p>
+
+<div class="ok">
+  <strong>No account or registration is required.</strong> There is no sign-up,
+  no login, and no server-side account. All data lives on the device you install
+  the app on.
+</div>
+
+<h2>1. Information the App Stores On Your Device</h2>
+
+<h3>API keys (the core secret)</h3>
+<ul>
+  <li>When you add a key, you paste the plaintext API key (e.g.
+      <code>sk-…</code> for OpenAI). The app encrypts it immediately and never
+      stores the plaintext.</li>
+  <li>Encryption is <strong>AES-256-GCM</strong> with a randomly generated
+      256-bit Data-Encryption Key (DEK). The DEK itself is stored in
+      Android&rsquo;s <code>EncryptedSharedPreferences</code>, which wraps it in
+      the <strong>Android Keystore</strong> system (a hardware-backed or
+      strongBox-protected master key). Two layers of at-rest encryption.</li>
+  <li>A non-secret <em>mask preview</em> (last four characters) is also stored so
+      the key list can display a readable identifier without decrypting
+      anything.</li>
+  <li>The plaintext key is recovered from the encrypted blob <em>only</em> in
+      transient memory, for three user-initiated actions: copy-to-clipboard,
+      the test ping (Pro only), and backup export. It is never persisted in
+      plaintext, never written to logs, and never sent to our servers.</li>
+</ul>
+
+<h3>Key metadata</h3>
+<p>The following non-secret metadata is stored in a local Room database:</p>
+<ul>
+  <li>Label and optional notes you assign to each key</li>
+  <li>Provider identity (OpenAI, Anthropic, etc.)</li>
+  <li>Key status (<em>Untested</em>, <em>Testing</em>, <em>Valid</em>,
+      <em>Invalid</em>, <em>Error</em>) &mdash; the result of the last test
+      ping</li>
+  <li>Creation and last-updated timestamps</li>
+</ul>
+
+<h3>Your settings</h3>
+<p>All preferences are stored locally in encrypted DataStore:</p>
+<ul>
+  <li>Clipboard auto-clear interval (5&ndash;120 seconds)</li>
+  <li>Biometric lock toggle</li>
+  <li>Font-size scale preference</li>
+  <li>Onboarding completion state</li>
+  <li>Ad-interstitial cadence state (free tier only)</li>
+  <li>The set of product IDs you have purchased (the Pro status flag)</li>
+</ul>
+
+<h2>2. Information Sent Over the Network</h2>
+
+<p>
+  <strong>The app does not upload your keys, metadata, or usage data to any server
+  we control.</strong> No analytics, no crash reports, and no telemetry are sent
+  to the developer. The only outbound network traffic initiated by the app falls
+  into two categories, both of which are user-driven:
+</p>
+
+<h3>(a) Key test ping &mdash; Pro feature, fully user-initiated</h3>
+<p>
+  When you are a Pro user and tap the <strong>&ldquo;Test key&rdquo;</strong>
+  button on a key&rsquo;s detail screen, the app:
+</p>
+<ul>
+  <li>Decrypts the key in transient memory</li>
+  <li>Constructs a minimal authenticated <code>GET</code> request to that
+      provider&rsquo;s <em>official</em> API endpoint (e.g.
+      <code>https://api.openai.com/v1/models</code> for OpenAI,
+      <code>https://api.anthropic.com/v1/models</code> for Anthropic)</li>
+  <li>Sends the key as a standard Authorization header (Bearer token for most
+      providers, API-key parameter for Google) over <strong>HTTPS/TLS</strong>
+  </li>
+  <li>Reads only the HTTP status code (2xx = valid, 401/403 = invalid, other =
+      error) and immediately discards the response body</li>
+  <li>Never logs the key or the response content</li>
+</ul>
+<p>
+  <strong>This request goes directly to the AI provider you selected.</strong>
+  It is not routed through, proxied by, or visible to the CredStow developer.
+  Azure OpenAI and &ldquo;Other&rdquo; providers do not support testing and
+  will never trigger a network request.
+</p>
+
+<div class="warn">
+  <strong>By using Test key, you authorize the app to transmit your decrypted
+  API key to the provider&rsquo;s public API for the sole purpose of validating
+  it. Standard provider rate limits and terms apply.</strong>
+</div>
+
+<h3>(b) Google services &mdash; billing and advertising</h3>
+<ul>
+  <li><strong>Google Play Billing:</strong> When you upgrade to Pro, the app
+      communicates with Google Play to process the one-time purchase
+      (&ldquo;<code>pro_unlock</code>&rdquo;) and validate your ownership
+      status. Google handles payment and purchase data per their
+      <a href="https://payments.google.com/terms">terms</a>. Your purchase state
+      is cached locally in encrypted DataStore for fast UI reads.</li>
+  <li><strong>Google Mobile Ads (AdMob):</strong> Free (non-Pro) users see a
+      banner ad and occasional interstitials at certain milestones. AdMob may
+      collect device identifiers (such as your AAID or a resettable ad ID) and
+      use cookies per Google&rsquo;s <a
+      href="https://policies.google.com/technologies/ads">Ads Privacy
+      &amp; Terms</a>. Pro users <em>never</em> see ads or send any ad-related
+      data.</li>
+</ul>
+
+<h2>3. How We Use Your Information</h2>
+<p>Because data never leaves your device, usage is strictly local:</p>
+<ul>
+  <li>To <strong>display</strong> your keys, their masked previews, and their
+      test status</li>
+  <li>To <strong>decrypt</strong> keys only when you explicitly copy, test, or
+      export them</li>
+  <li>To <strong>encrypt / decrypt</strong> keys with the Keystore-backed DEK
+      for storage and retrieval</li>
+  <li>To <strong>process Pro upgrades</strong> via Google Play Billing</li>
+  <li>(Free tier only) To <strong>load banner and interstitial ads</strong> via
+      the Google Mobile Ads SDK</li>
+</ul>
+
+<h2>4. Your Rights and Controls</h2>
+
+<table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+  <tr><td style="padding:.4rem 0;font-weight:600;">Delete a single key</td>
+      <td style="padding:.4rem 0;">Tap Delete on the key&rsquo;s detail screen. It is removed from the database and Room in seconds.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Delete all keys</td>
+      <td style="padding:.4rem 0;">Uninstalling the app removes <strong>all</strong> app data (keys, metadata, settings) from the device, as Google Play/Play Store manages uninstall cleanup.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Export an encrypted backup</td>
+      <td style="padding:.4rem 0;">(Pro) Generate a password-protected, AES-256-GCM-encrypted backup of your keys and paste it into a file of your choice for safekeeping.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Import a backup</td>
+      <td style="padding:.4rem 0;">(Pro) Restore keys from a previously exported encrypted backup blob.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Opt out of ads</td>
+      <td style="padding:.4rem 0;">Upgrade to Pro. No ad-related data is ever collected from Pro users.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Disable biometric lock</td>
+      <td style="padding:.4rem 0;">Toggle it off in Settings at any time. The app will then open directly to your key list.</td></tr>
+  <tr><td style="padding:.4rem 0;font-weight:600;">Reset advertising ID</td>
+      <td style="padding:.4rem 0;">Control ad tracking via your device&rsquo;s <em>Settings &rarr; Google &rarr; Ads</em> menu.</td></tr>
+</table>
+
+<h2>5. Data Retention and Deletion</h2>
+
+<p>
+  CredStow retains your data <strong>indefinitely, on-device only, until you
+  delete it</strong>. There is no automatic expiry, no server-side account to
+  delete, and no data sync across devices. Deleting the app (or clearing its
+  storage in Android Settings) permanently erases all keys and metadata
+  irreversibly &mdash; the encryption keys are likewise destroyed, making
+  recovery computationally impossible.
+</p>
+
+<p class="muted">
+  <em>We cannot recover deleted keys or backups, so export an encrypted backup
+  before uninstalling if you want a copy.</em>
+</p>
+
+<h2>6. Security Practices</h2>
+
+<ul>
+  <li>
+    <strong>Two-layer encryption at rest:</strong> API key plaintext is encrypted
+    with AES-256-GCM (random 96-bit nonce per key) using a 256-bit DEK. The DEK
+    is stored in <code>EncryptedSharedPreferences</code> (AES-256-GCM /
+    AES-256-SIV), whose master key is managed by the <strong>Android
+    Keystore</strong> (hardware-backed where available).
+  </li>
+  <li>
+    <strong>No key in logs:</strong> StrictCode paths that decrypt keys never
+    log them. The OkHttp client used for test pings is built with
+    <code>connectTimeout(15s)</code> / <code>readTimeout(15s)</code> and
+    carries <strong>no logging interceptor</strong>.
+  </li>
+  <li>
+    <strong>Defensive decryption:</strong> Tampered ciphertext or wrong keys
+    fail GCM authentication and are rejected (the decrypt call returns
+    <code>null</code>), never surfacing partial or corrupted secrets.
+  </li>
+  <li>
+    <strong>Clipboard auto-clear:</strong> Copied keys are wiped from the
+    clipboard after a user-chosen interval (default 30 seconds).
+  </li>
+  <li>
+    <strong>Pro guarded:</strong> Sensitive actions (test ping, backup export,
+    import) check Pro ownership at the use-case level before executing.
+  </li>
+</ul>
+
+<h2>7. Children&rsquo;s Privacy</h2>
+<p>
+  CredStow is <strong>not directed at children</strong> and is not marketed to
+  anyone under 13. The app does not knowingly collect personal information from
+  children. If you believe a child&rsquo;s data has been provided through the
+  app, contact us and we will remove it.
+</p>
+
+<h2>8. International Data Transfers</h2>
+<p>
+  Your data is stored entirely on your device and is not transferred across
+  borders by CredStow. Any network requests during a test ping go to the
+  provider&rsquo;s infrastructure, which may be located in various jurisdictions
+  &mdash; this is governed by that provider&rsquo;s own privacy policy.
+</p>
+
+<h2>9. Changes to This Policy</h2>
+<p>
+  We may update this Privacy Policy. When we do, the effective date above will
+  change. Substantive changes that affect your rights will be communicated via
+  an in-app notice and a Play Store release-notes update.
+</p>
+
+<h2>10. Analytics and Crash Reporting</h2>
+<p>
+  As of this writing, CredStow does <strong>not</strong> integrate any
+  third-party analytics or crash-reporting SDK. We collect no usage metrics, no
+  device identifiers, and no crash traces. If this changes in a future release,
+  we will update this policy and provide an in-app opt-out where required.
+</p>
+
+<h2>11. Contact Us</h2>
+<p>
+  If you have questions about this Privacy Policy or your data:
+</p>
+<ul>
+  <li>Email: <a href="mailto:support@CredStow.app">support@CredStow.app</a></li>
+  <li>In-app: Settings &rarr; Privacy policy (this page)</li>
+</ul>
+
+<p class="muted" style="margin-top: 2rem;">
+  CredStow is developed and published as a local-first, on-device application.
+  This policy reflects that design: minimal collection, maximum local control.
+</p>
+
+</body>
+</html>
+

@@ -1,17 +1,33 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
+    // google-services and firebase-crashlytics Gradle plugins are declared in
+    // settings.gradle.kts (apply = false) and applied conditionally below,
+    // because the google-services plugin requires app/google-services.json,
+    // which is never committed (see .gitignore). See FIREBASE_SETUP.md.
+}
+
+// Conditionally apply Firebase plugins. The google-services plugin FAILS the
+// build if app/google-services.json is absent, so we gate on its existence.
+// The Crashlytics SDK dependency (in deps below) is always present; without
+// the config file it silently no-ops at runtime.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 android {
-    namespace = "com.keyvault.app"
+    namespace = "com.credstow.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.keyvault.app"
+        applicationId = "com.credstow.app"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -20,13 +36,36 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Release signing: reads credentials from keystore.properties (git-ignored,
+    // never committed). See keystore.properties.example for setup instructions.
+    // The Play Store requires an unsigned-by-debug upload; Google Play App Signing
+    // then manages your production signing key. Until you enroll, sign with your
+    // own upload key created via keytool.
+    signingConfigs {
+        create("release") {
+            val propsFile = rootProject.file("keystore.properties")
+            if (propsFile.exists()) {
+                val props = Properties()
+                FileInputStream(propsFile).use { props.load(it) }
+                storeFile = file(props.getProperty("MYAPP_STORE_FILE")!!)
+                storePassword = props.getProperty("MYAPP_STORE_PASSWORD")!!
+                keyAlias = props.getProperty("MYAPP_KEY_ALIAS")!!
+                keyPassword = props.getProperty("MYAPP_KEY_PASSWORD")!!
+            }
+        }
+    }
+
     buildTypes {
         release {
             // Keys are encrypted at rest; shrinking/obfuscation does not expose them.
-            // ProGuards/R8 rules keep our tiny reflection-based code paths intact if
-            // minification is later enabled, but it is off for v1 to keep behavior predictable.
-            isMinifyEnabled = false
-            isShrinkResources = false
+            // R8 minify + resource shrinking reduces APK size and hardens the binary
+            // by removing unused code and renaming internal symbols. The proguard
+            // rules in proguard-rules.pro keep all reflection-dependent library
+            // code (Room, OkHttp, AdMob, Play Billing, Compose) intact.
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
             proguardFiles("proguard-rules.pro")
         }
         debug {
@@ -67,6 +106,13 @@ android {
     lint {
         checkReleaseBuilds = false
         abortOnError = false
+    }
+
+    // Room: export schema JSON to app/schemas/ so migrations are version-controlled.
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+        arg("room.exportSchema", "true")
     }
 
     testOptions {
@@ -119,6 +165,13 @@ dependencies {
 
     // --- Monetization: one-time Pro purchase ---
     implementation(libs.billing)
+
+    // --- Crash reporting (Firebase Crashlytics) ------------------------------
+    // Requires app/google-services.json (generated from the Firebase console,
+    // MUST NOT be committed — see .gitignore). Without the JSON file the SDK
+    // silently no-ops on startup; the build still succeeds.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics.ktx)
 
     // --- Ads (Google AdMob) — banner shown to free users; suppressed when Pro ---
     implementation(libs.google.ads)
