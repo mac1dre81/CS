@@ -34,6 +34,10 @@ class SettingsViewModel(
     val isPro: StateFlow<Boolean> = proState.isPro
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    /** Free 7-day trial end timestamp (epoch-ms). 0 = no trial. */
+    val proTrialEndsAt: StateFlow<Long> = settings.proTrialEndsAt
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+
     val clipboardAutoClearSeconds: StateFlow<Int> = settings.clipboardAutoClearSeconds
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppConst.CLIPBOARD_AUTO_CLEAR_DEFAULT_SECONDS)
 
@@ -71,6 +75,19 @@ class SettingsViewModel(
             billingManager.syncPurchases()
             val pro = isPro.value
             messages.emit(if (pro) "Pro is active" else "You're on the free plan (billing unavailable in dev build)")
+        }
+    }
+
+    fun startProTrial() {
+        viewModelScope.launch {
+            // Don't start a trial if already Pro or already trialing.
+            if (isPro.value || settings.isProTrialActive()) {
+                messages.emit("You already have Pro access")
+                return@launch
+            }
+            val end = System.currentTimeMillis() + AppConst.PRO_TRIAL_DURATION_MS
+            settings.setProTrialEndsAt(end)
+            messages.emit("Free Pro trial started! Enjoy all features for 5 days.")
         }
     }
 

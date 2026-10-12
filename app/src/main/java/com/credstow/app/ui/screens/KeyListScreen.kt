@@ -59,6 +59,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.credstow.app.ui.components.AdBanner
 import com.credstow.app.ui.components.EmptyState
 import com.credstow.app.ui.components.NoResultsState
+import com.credstow.app.ui.components.ProLimitBanner
 import com.credstow.app.ui.components.UpgradeDialog
 import com.credstow.app.ui.components.FilterRow
 import com.credstow.app.ui.components.KeyListItem
@@ -192,6 +193,16 @@ fun KeyListScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
+            // Smart Pro trial/limit banner for free users approaching their key limit
+            if (vm.shouldShowProBanner) {
+                ProLimitBanner(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    keyCount = ui.keyCount,
+                    onUpgrade = { navController.navigate(Routes.SETTINGS) },
+                )
+            }
             when {
                 ui.isLoading -> {
                     Box(

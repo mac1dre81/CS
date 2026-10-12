@@ -32,6 +32,19 @@ class SettingsProState(
         if (isDebugBuild) flowOf(true)
         else settings.isPro
 
+    /**
+     * Effective Pro state including the free 7-day trial. Returns true when
+     * *either* the product is purchased *or* a trial is still running.
+     */
+    val isProEffective: Flow<Boolean> =
+        if (isDebugBuild) flowOf(true)
+        else combine(isPro, settings.proTrialEndsAt) { purchased, ends ->
+            purchased || ends > System.currentTimeMillis()
+        }
+
     override suspend fun isProNow(): Boolean =
         isDebugBuild || settings.isProNow()
+
+    /** True if a free 7-day Pro trial is currently active (or was, but expired). */
+    suspend fun isProTrialActive(): Boolean = settings.isProTrialActive()
 }

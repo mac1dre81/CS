@@ -53,7 +53,15 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     val keySortBy: Flow<SortBy> = store.data
         .map { fromSortBy(it[Keys.KeySortBy]) }
 
+    /** Free 7-day Pro trial end timestamp (epoch-ms). 0 = no trial active. */
+    val proTrialEndsAt: Flow<Long> = store.data
+        .map { it[Keys.ProTrialEndsAt] ?: 0L }
+
     suspend fun isProNow(): Boolean = isPro.first()
+
+    /** Returns true if a free 7-day Pro trial is currently active. */
+    suspend fun isProTrialActive(): Boolean =
+        proTrialEndsAt.first() > System.currentTimeMillis()
 
     suspend fun setOnboardingCompleted(value: Boolean) {
         store.edit { it[Keys.OnboardingCompleted] = value }
@@ -94,6 +102,11 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         store.edit { it[Keys.KeySortBy] = sortBy.column }
     }
 
+    /** Start or clear the free Pro trial. Pass 0 to clear. */
+    suspend fun setProTrialEndsAt(timestamp: Long) {
+        store.edit { it[Keys.ProTrialEndsAt] = timestamp }
+    }
+
     private fun fromSortBy(value: String?): SortBy =
         SortBy.entries.firstOrNull { it.column == value } ?: SortBy.CreatedAt
 
@@ -107,6 +120,7 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         val FontScale = floatPreferencesKey("font_scale")
         val PurchasedProductIds = stringSetPreferencesKey("purchased_product_ids")
         val KeySortBy = stringPreferencesKey("key_sort_by")
+        val ProTrialEndsAt = longPreferencesKey("pro_trial_ends_at")
     }
 }
 

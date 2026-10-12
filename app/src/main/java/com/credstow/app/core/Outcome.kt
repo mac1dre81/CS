@@ -20,6 +20,14 @@ object AppConst {
     const val AUTO_LOCK_MIN_MINUTES = 1
     const val AUTO_LOCK_MAX_MINUTES = 60
 
+    /** Free Pro trial duration (5 days) — lets free users experience key Pro features
+     *  (unlimited keys, biometric re-auth, expiry dates, sorting, backup/export,
+     *  ad-free) without being overly generous. Five days is enough to add keys
+     *  across multiple sessions, test biometric re-auth, set expiry dates, and
+     *  use export/import, while still creating urgency to convert. */
+    const val PRO_TRIAL_DAYS = 5
+    const val PRO_TRIAL_DURATION_MS = PRO_TRIAL_DAYS * 24 * 60 * 60 * 1000L
+
     /** In-app font-scale presets (Accessibility). 1.0f == "system default" (no override). */
     const val FONT_SCALE_SMALL = 0.9f
     const val FONT_SCALE_DEFAULT = 1.0f

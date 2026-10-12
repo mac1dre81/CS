@@ -97,6 +97,25 @@
     <string name="settings_pro_price">\$4.99</string>
     <string name="settings_pro_unlocked">Pro features unlocked</string>
     <string name="settings_pro_upgrade">Upgrade to Pro</string>
+    <string name="settings_pro_trial_start">Start 5-day free trial</string>
+    <string name="settings_pro_trial_started">Free Pro trial started! Enjoy all features for 5 days.</string>
+    <string name="settings_pro_trial_remaining">Free trial ends in %1$d days</string>
+    <string name="settings_pro_trial_expired">Your free trial has expired. Upgrade to Pro for full access.</string>
+    <string name="settings_pro_feature_unlimited">Unlimited keys</string>
+    <string name="settings_pro_feature_unlimited_desc">Store as many API keys as you need</string>
+    <string name="settings_pro_feature_biometric">Biometric re-auth</string>
+    <string name="settings_pro_feature_biometric_desc">Secure copy and test with biometric lock</string>
+    <string name="settings_pro_feature_expiry">Expiration dates</string>
+    <string name="settings_pro_feature_expiry_desc">Set and track key expiration with reminders</string>
+    <string name="settings_pro_feature_sort">Custom sorting</string>
+    <string name="settings_pro_feature_sort_desc">Sort by name, last used, expiry date, or creation date</string>
+    <string name="settings_pro_feature_backup">Encrypted backup</string>
+    <string name="settings_pro_feature_backup_desc">Export and import your encrypted key vault</string>
+    <string name="settings_pro_feature_ads">Ad-free experience</string>
+    <string name="settings_pro_feature_ads_desc">No interstitial ads or banners</string>
+    <string name="settings_pro_feature_test">Key testing</string>
+    <string name="settings_pro_feature_test_desc">Test API keys against provider endpoints</string>
+    <string name="settings_pro_trial_banner">Free Pro trial — %1$s</string>
     <string name="biometric_prompt_title">Unlock CredStow</string>
     <string name="biometric_prompt_subtitle">Scan your fingerprint or face, or use your device credential</string>
 

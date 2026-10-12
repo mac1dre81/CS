@@ -15,6 +15,7 @@ import com.credstow.app.model.VaultKey
 import com.credstow.app.AuthTracker
 import com.credstow.app.R
 import com.credstow.app.ads.AdRules
+import com.credstow.app.core.AppConst
 import com.credstow.app.data.local.SortBy
 import com.credstow.app.prefs.SettingsRepository
 import com.credstow.app.util.ClipboardHelper
@@ -48,6 +49,9 @@ class KeyListViewModel(
         val filter: KeyFilter = KeyFilter(),
         val isLoading: Boolean = true,
         val isPro: Boolean = false,
+        val isTrialActive: Boolean = false,
+        val proTrialEndsAt: Long = 0L,
+        val keyCount: Int = 0,
     )
 
     // SharingStarted.Eagerly is intentional here: WhileSubscribed(5_000) would
@@ -66,13 +70,23 @@ class KeyListViewModel(
     private val keySortBy = settings.keySortBy
         .stateIn(viewModelScope, SharingStarted.Eagerly, SortBy.CreatedAt)
 
+    /** Free 7-day trial end timestamp (epoch-ms). 0 = no trial. */
+    val proTrialEndsAt: StateFlow<Long> = settings.proTrialEndsAt
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+
+    /** Effective Pro state: true if purchased OR trial is active. */
+    private val isProEffective = combine(isProState, proTrialEndsAt) { purchased, ends ->
+        purchased || (ends > 0L && ends > System.currentTimeMillis())
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     private val _filter = MutableStateFlow(KeyFilter())
     val filter: StateFlow<KeyFilter> = _filter
 
     /** IDs of keys that have been swiped away but not yet confirmed-deleted. */
     private val pendingDeleteIds = MutableStateFlow<Set<String>>(emptySet())
 
-    val uiState: StateFlow<UiState> = combine(allKeys, _filter, isProState, pendingDeleteIds, keySortBy) { keys, f, pro, pending, sort ->
+    val uiState: StateFlow<UiState> = combine(allKeys, _filter, isProEffective, pendingDeleteIds, keySortBy) { keys, f, pro, pending, sort ->
+        val isTrialActive = pro && !isProState.value
         val filtered = searchAndFilter(keys, f).filterNot { it.id in pending }
         val sorted = sortKeys(filtered, sort)
         UiState(
@@ -80,6 +94,9 @@ class KeyListViewModel(
             filter = f,
             isLoading = false,
             isPro = pro,
+            isTrialActive = isTrialActive,
+            proTrialEndsAt = proTrialEndsAt.value,
+            keyCount = keys.size,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(isLoading = true))
 
@@ -129,6 +146,10 @@ class KeyListViewModel(
     }
 
     fun canAddKeyNow(): Boolean = canAddKey(isProState.value, allKeys.value.size)
+
+    /** True when a free user is approaching the key limit (2 of 3 keys used) — show a gentle Pro banner. */
+    val shouldShowProBanner: Boolean
+        get() = !uiState.value.isPro && uiState.value.keyCount >= AppConst.FREE_KEY_LIMIT - 1
 
     fun onDelete(id: String) {
         viewModelScope.launch {

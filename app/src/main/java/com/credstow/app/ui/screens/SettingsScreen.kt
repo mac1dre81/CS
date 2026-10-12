@@ -79,6 +79,9 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val isPro by vm.isPro.collectAsState()
+    val proTrialEndsAt by vm.proTrialEndsAt.collectAsState(initial = 0L)
+    val isTrialActive = proTrialEndsAt > 0L && proTrialEndsAt > System.currentTimeMillis()
+    val isEffectivePro = isPro || isTrialActive
     val autoClear by vm.clipboardAutoClearSeconds.collectAsState()
     val biometric by vm.biometricLockEnabled.collectAsState()
     val autoLock by vm.autoLockAfterMinutes.collectAsState(AppConst.AUTO_LOCK_DEFAULT_MINUTES)
@@ -94,6 +97,12 @@ fun SettingsScreen(
     var sortDialog by rememberSaveable { mutableStateOf(false) }
 
     val activity = LocalContext.current.findActivity()
+
+    val trialRemainingText: String? = if (isTrialActive) {
+        val daysLeft = ((proTrialEndsAt - System.currentTimeMillis()) / (24 * 60 * 60 * 1000L)).toInt().coerceAtLeast(0)
+        if (daysLeft > 0) stringResource(R.string.settings_pro_trial_remaining, daysLeft)
+        else stringResource(R.string.settings_pro_trial_expired)
+    } else null
 
     LaunchedEffect(Unit) {
         vm.messages.collect { snackbarHostState.showSnackbar(it) }
@@ -132,7 +141,7 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
             ) {
                 Column(Modifier.padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -155,16 +164,81 @@ fun SettingsScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp),
                     )
-                    if (isPro) {
-                        Text(
-                            stringResource(R.string.settings_pro_unlocked),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF16A34A),
-                            modifier = Modifier.padding(top = 8.dp),
-                        )
-                    } else {
-                        TextButton(onClick = { vm.unlockPro(activity) }) {
-                            Text("${stringResource(R.string.settings_pro_price)}  \u2022  ${stringResource(R.string.settings_pro_upgrade)}")
+
+                    // Feature checklist (always shown to highlight Pro value)
+                    val features = listOf(
+                        stringResource(R.string.settings_pro_feature_unlimited) to
+                            stringResource(R.string.settings_pro_feature_unlimited_desc),
+                        stringResource(R.string.settings_pro_feature_biometric) to
+                            stringResource(R.string.settings_pro_feature_biometric_desc),
+                        stringResource(R.string.settings_pro_feature_expiry) to
+                            stringResource(R.string.settings_pro_feature_expiry_desc),
+                        stringResource(R.string.settings_pro_feature_sort) to
+                            stringResource(R.string.settings_pro_feature_sort_desc),
+                        stringResource(R.string.settings_pro_feature_backup) to
+                            stringResource(R.string.settings_pro_feature_backup_desc),
+                        stringResource(R.string.settings_pro_feature_ads) to
+                            stringResource(R.string.settings_pro_feature_ads_desc),
+                        stringResource(R.string.settings_pro_feature_test) to
+                            stringResource(R.string.settings_pro_feature_test_desc),
+                    )
+                    features.forEach { (title, desc) ->
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = Color(0xFF16A34A),
+                                modifier = Modifier.size(14.dp),
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    title,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                Text(
+                                    desc,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+
+                    // Action button: Start trial / Upgrade / Unlocked
+                    when {
+                        isPro -> {
+                            Text(
+                                stringResource(R.string.settings_pro_unlocked),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF16A34A),
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                        }
+                        isTrialActive -> {
+                            Text(
+                                trialRemainingText ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFFFF6B35),
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                            TextButton(onClick = { vm.unlockPro(activity) }) {
+                                Text("${stringResource(R.string.settings_pro_price)}  \u2022  ${stringResource(R.string.settings_pro_upgrade)}")
+                            }
+                        }
+                        else -> {
+                            TextButton(onClick = { vm.startProTrial() }) {
+                                Text("${stringResource(R.string.settings_pro_trial_start)}  \u2022  ${stringResource(R.string.settings_pro_price)}")
+                            }
+                            TextButton(onClick = { vm.unlockPro(activity) }) {
+                                Text(stringResource(R.string.settings_pro_upgrade))
+                            }
                         }
                     }
                 }
@@ -232,8 +306,8 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_key_sort),
                 subtitle = vm.sortLabel,
                 icon = Icons.Default.DisplaySettings,
-                enabled = isPro,
-                onClick = { if (isPro) sortDialog = true else showUpgrade = true },
+                enabled = isEffectivePro,
+                onClick = { if (isEffectivePro) sortDialog = true else showUpgrade = true },
             )
             SettingsRow(
                 title = stringResource(R.string.display_system),
@@ -250,14 +324,14 @@ fun SettingsScreen(
             SettingsRow(
                 title = stringResource(R.string.settings_export),
                 icon = Icons.Default.CloudUpload,
-                enabled = isPro,
-                onClick = { if (isPro) exportDialog = true else showUpgrade = true },
+                enabled = isEffectivePro,
+                onClick = { if (isEffectivePro) exportDialog = true else showUpgrade = true },
             )
             SettingsRow(
                 title = stringResource(R.string.settings_import),
                 icon = Icons.Default.CloudDownload,
-                enabled = isPro,
-                onClick = { if (isPro) importDialog = true else showUpgrade = true },
+                enabled = isEffectivePro,
+                onClick = { if (isEffectivePro) importDialog = true else showUpgrade = true },
             )
             SettingsRow(
                 title = stringResource(R.string.settings_privacy),

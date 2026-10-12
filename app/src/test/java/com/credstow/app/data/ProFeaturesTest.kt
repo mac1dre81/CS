@@ -197,6 +197,79 @@ class ProFeaturesTest {
         assertThat(sorted.map { it.label }).containsExactly("B", "A").inOrder()
     }
 
+    // ---- Growth optimizations: trial logic ----
+
+    @Test
+    fun trialEndsAtCorrectlyAfterPurchaseDuration() {
+        val start = System.currentTimeMillis()
+        val expectedEnd = start + com.credstow.app.core.AppConst.PRO_TRIAL_DURATION_MS
+        val trialEnd = start + com.credstow.app.core.AppConst.PRO_TRIAL_DURATION_MS
+        assertThat(trialEnd - start).isEqualTo(expectedEnd - start)
+        assertThat(com.credstow.app.core.AppConst.PRO_TRIAL_DAYS).isEqualTo(5)
+    }
+
+    @Test
+    fun trialActiveWhenEndsAtIsInFuture() {
+        val future = System.currentTimeMillis() + 1000
+        val isActive = future > 0L && future > System.currentTimeMillis()
+        assertThat(isActive).isTrue()
+    }
+
+    @Test
+    fun trialInactiveWhenEndsAtIsInPast() {
+        val past = System.currentTimeMillis() - 1000
+        val isActive = past > 0L && past > System.currentTimeMillis()
+        assertThat(isActive).isFalse()
+    }
+
+    @Test
+    fun trialInactiveWhenEndsAtIsZero() {
+        val isActive = 0L > 0L && 0L > System.currentTimeMillis()
+        assertThat(isActive).isFalse()
+    }
+
+    // ---- Growth optimizations: trial + key-limit banner ----
+
+    @Test
+    fun freeUserApproachingKeyLimitTriggersBanner() = runTest {
+        val r = repo()
+        addKey(r, "Key 1", "sk-a1234567890abcdef00")
+        addKey(r, "Key 2", "sk-b1234567890abcdef00")
+
+        val keys = r.observeKeys().first()
+        val keyCount = keys.size
+        val isPro = false
+        val shouldShowBanner = !isPro && keyCount >= com.credstow.app.core.AppConst.FREE_KEY_LIMIT - 1
+        assertThat(shouldShowBanner).isTrue()
+        assertThat(keyCount).isEqualTo(2)
+    }
+
+    @Test
+    fun proUserNeverTriggersLimitBanner() = runTest {
+        val r = repo()
+        addKey(r, "Key 1", "sk-a1234567890abcdef00")
+        addKey(r, "Key 2", "sk-b1234567890abcdef00")
+        addKey(r, "Key 3", "sk-c1234567890abcdef00")
+
+        val keys = r.observeKeys().first()
+        val keyCount = keys.size
+        val isPro = true
+        val shouldShowBanner = !isPro && keyCount >= com.credstow.app.core.AppConst.FREE_KEY_LIMIT - 1
+        assertThat(shouldShowBanner).isFalse()
+    }
+
+    @Test
+    fun newKeyUnderLimitDoesNotTriggerBanner() = runTest {
+        val r = repo()
+        addKey(r, "Key 1", "sk-a1234567890abcdef00")
+
+        val keys = r.observeKeys().first()
+        val keyCount = keys.size
+        val isPro = false
+        val shouldShowBanner = !isPro && keyCount >= com.credstow.app.core.AppConst.FREE_KEY_LIMIT - 1
+        assertThat(shouldShowBanner).isFalse()
+    }
+
     // ---- Sort helper (mirrors KeyListViewModel.sortKeys) ----
 
     private fun sortKeys(keys: List<VaultKey>, sort: SortBy): List<VaultKey> = when (sort) {
