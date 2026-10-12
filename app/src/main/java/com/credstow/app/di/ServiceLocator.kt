@@ -85,7 +85,7 @@ class ServiceLocator private constructor(context: Context) {
         PreferenceDataStoreFactory.create { appContext.preferencesDataStoreFile("settings.pb") }
     }
     val settingsRepository: SettingsRepository by lazy { SettingsRepository(dataStore) }
-    val proState: ProState by lazy { SettingsProState(settingsRepository) }
+    val proState: ProState by lazy { SettingsProState(settingsRepository, appContext) }
     val clipboardHelper: ClipboardHelper by lazy { ClipboardHelper(appContext) }
 
     // --- Ads (free-tier interstitial; Pro users never receive show events) ---
