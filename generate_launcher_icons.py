@@ -48,33 +48,35 @@ def v2px(vx, vy, icon_size):
 
 
 def draw_key(draw, icon_size):
-    """Draw the key icon (bow, shaft, biting, teeth) scaled and centred."""
+    """Draw the key icon (wide bow, shaft, biting, teeth) scaled and centred."""
     s = icon_size / 24.0  # viewport-to-pixel scale (before the 0.8 content scale)
 
-    # Bow: circle at (12,6) r=2.8  →  after 0.8 scale around pivot
-    bx, by = v2px(12, 6, icon_size)
-    br = 2.8 * SCALE * s
-    draw.ellipse(
-        [bx - br, by - br, bx + br, by + br],
+    # Bow: rounded rectangle (7,4)-(17,7) with corner radius 1 in viewport
+    bx1, by1 = v2px(7, 4, icon_size)
+    bx2, by2 = v2px(17, 7, icon_size)
+    radius = 1 * SCALE * s
+    draw.rounded_rectangle(
+        [bx1, by1, bx2, by2],
+        radius=radius,
         fill=FG,
     )
 
-    # Shaft: rect (10.5,8.8)-(13.5,18)
-    x1, y1 = v2px(10.5, 8.8, icon_size)
-    x2, y2 = v2px(13.5, 18, icon_size)
+    # Shaft: rect (10.5,7)-(13.5,17.5)
+    x1, y1 = v2px(10.5, 7, icon_size)
+    x2, y2 = v2px(13.5, 17.5, icon_size)
     draw.rectangle([x1, y1, x2, y2], fill=FG)
 
-    # Biting: rect (7,18)-(17,19.6)
-    x1, y1 = v2px(7, 18, icon_size)
-    x2, y2 = v2px(17, 19.6, icon_size)
+    # Biting: rect (7,17.5)-(17,19)
+    x1, y1 = v2px(7, 17.5, icon_size)
+    x2, y2 = v2px(17, 19, icon_size)
     draw.rectangle([x1, y1, x2, y2], fill=FG)
 
-    # Teeth: (7,19.8)-(8.6,21.6)  and  (15.4,19.8)-(17,21.6)
-    x1, y1 = v2px(7, 19.8, icon_size)
-    x2, y2 = v2px(8.6, 21.6, icon_size)
+    # Teeth: (7,19.2)-(8.8,21)  and  (15.2,19.2)-(17,21)
+    x1, y1 = v2px(7, 19.2, icon_size)
+    x2, y2 = v2px(8.8, 21, icon_size)
     draw.rectangle([x1, y1, x2, y2], fill=FG)
-    x1, y1 = v2px(15.4, 19.8, icon_size)
-    x2, y2 = v2px(17, 21.6, icon_size)
+    x1, y1 = v2px(15.2, 19.2, icon_size)
+    x2, y2 = v2px(17, 21, icon_size)
     draw.rectangle([x1, y1, x2, y2], fill=FG)
 
 
