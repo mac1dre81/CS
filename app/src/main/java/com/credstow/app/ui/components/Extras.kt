@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -39,7 +41,12 @@ fun FilterRow(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        ) {
             AssistChip(
                 onClick = { vm.setProviderFilter(null) },
                 label = { Text(stringResource(R.string.list_filter_all)) },
@@ -57,7 +64,12 @@ fun FilterRow(
                 )
             }
         }
-        Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        ) {
             val statuses = listOf(KeyStatus.UNTESTED, KeyStatus.VALID, KeyStatus.INVALID)
             statuses.forEach { s ->
                 AssistChip(
