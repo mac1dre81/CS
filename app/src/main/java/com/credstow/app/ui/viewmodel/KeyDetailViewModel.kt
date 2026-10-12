@@ -36,14 +36,14 @@ class KeyDetailViewModel(
     val key: StateFlow<VaultKey?> = _key.asStateFlow()
 
     val isPro: StateFlow<Boolean> = proState.isPro
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val autoClearSeconds: StateFlow<Int> = settings.clipboardAutoClearSeconds
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 30)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, 30)
 
     val canTest: StateFlow<Boolean> = combine(key, isPro) { k, pro ->
         pro && k?.provider?.supportsTest == true
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val _isTesting = MutableStateFlow(false)
     val isTesting: StateFlow<Boolean> = _isTesting.asStateFlow()

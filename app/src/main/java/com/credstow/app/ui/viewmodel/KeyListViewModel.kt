@@ -47,11 +47,18 @@ class KeyListViewModel(
         val isPro: Boolean = false,
     )
 
+    // SharingStarted.Eagerly is intentional here: WhileSubscribed(5_000) would
+    // tear down Room's cold observeAll() Flow (and its InvalidationTracker)
+    // when the KeyListScreen is not visible. On return from Settings → Import,
+    // the re-subscription race can miss DB writes that happened during the
+    // WhileSubscribed cancellation window, so imported keys never surface in
+    // the list. Keeping the observer alive at all times guarantees the
+    // InvalidationTracker fires and the StateFlow is always current.
     private val allKeys = observeKeys()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val isProState = proState.isPro
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val _filter = MutableStateFlow(KeyFilter())
     val filter: StateFlow<KeyFilter> = _filter
@@ -66,7 +73,7 @@ class KeyListViewModel(
             isLoading = false,
             isPro = pro,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UiState(isLoading = true))
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(isLoading = true))
 
     /** One-shot events surfaced to the UI. */
     private val _events = MutableSharedFlow<Event>(extraBufferCapacity = 8)

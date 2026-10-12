@@ -33,8 +33,8 @@ class BackupCodec(
 
     /** Decrypts a backup blob. Returns null if the password is wrong or the blob is corrupt. */
     fun decode(blob: String, password: String): List<BackupEntry>? = runCatching {
-        val envelope = json.decodeFromString<PasswordCipherResult>(blob)
-        val bytes = passwordCrypto.decrypt(envelope, password) ?: return null
+        val envelope = json.decodeFromString<PasswordCipherResult>(blob.trim())
+        val bytes = passwordCrypto.decrypt(envelope, password) ?: return@runCatching null
         val plain = bytes.toString(StandardCharsets.UTF_8)
         json.decodeFromString<List<BackupEntry>>(plain)
     }.getOrNull()

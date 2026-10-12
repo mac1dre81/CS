@@ -316,7 +316,6 @@ fun SettingsScreen(
                         onValueChange = { importBlob = it },
                         label = { Text(stringResource(R.string.import_paste_blob_hint)) },
                         minLines = 3,
-                        maxLines = 6,
                     )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(

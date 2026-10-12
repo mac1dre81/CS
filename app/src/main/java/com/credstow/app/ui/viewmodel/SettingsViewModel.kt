@@ -31,19 +31,19 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     val isPro: StateFlow<Boolean> = proState.isPro
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val clipboardAutoClearSeconds: StateFlow<Int> = settings.clipboardAutoClearSeconds
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppConst.CLIPBOARD_AUTO_CLEAR_DEFAULT_SECONDS)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppConst.CLIPBOARD_AUTO_CLEAR_DEFAULT_SECONDS)
 
     val fontScale: StateFlow<Float> = settings.fontScale
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppConst.FONT_SCALE_DEFAULT)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppConst.FONT_SCALE_DEFAULT)
 
     val biometricLockEnabled: StateFlow<Boolean> = settings.biometricLockEnabled
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val autoLockAfterMinutes: StateFlow<Int> = settings.autoLockAfterMinutes
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppConst.AUTO_LOCK_DEFAULT_MINUTES)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, AppConst.AUTO_LOCK_DEFAULT_MINUTES)
 
     val billingEvents: Flow<BillingEvent> = billingManager.events
 
