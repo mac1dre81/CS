@@ -131,7 +131,10 @@ fun AddEditKeyScreen(
                             else MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.weight(1f),
                         )
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = stringResource(R.string.accessibility_provider_selector),
+                        )
                     }
                 }
             }

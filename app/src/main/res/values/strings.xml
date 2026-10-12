@@ -134,7 +134,14 @@
     <string name="status_testing">Testing…</string>
     <string name="status_error">Error</string>
 
-    <!-- Errors -->
+    <!-- Accessibility -->
+    <string name="accessibility_provider_selector">Select provider</string>
+    <string name="accessibility_copy_key">Copy key to clipboard</string>
+    <string name="accessibility_swipe_to_delete">Swipe to delete</string>
+    <string name="accessibility_status_chip">Status: %1$s</string>
+    <string name="accessibility_key_list_item">Key: %1$s, %2$s</string>
+
+    <!-- Error messages -->
     <string name="error_decryption">Decryption failed — wrong password or corrupted backup.</string>
     <string name="error_generic">Something went wrong. Please try again.</string>
 

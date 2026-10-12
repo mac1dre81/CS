@@ -108,6 +108,9 @@ fun ProviderBadge(
             fontWeight = FontWeight.Bold,
             color = Color.White,
             fontFamily = FontFamily.SansSerif,
+            // Provider initials are decorative; the provider name is announced
+            // via the supporting text in KeyListItem or KeyDetailContent.
+            maxLines = 1,
         )
     }
 }
@@ -132,6 +135,7 @@ fun StatusChip(status: KeyStatus, modifier: Modifier = Modifier) {
     }
     AssistChip(
         onClick = {},
+        enabled = false,
         label = {
             if (status == KeyStatus.TESTING) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
