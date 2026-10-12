@@ -3,23 +3,36 @@
     android:height="108dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- key bow -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M12,6 m-2.8,0 a2.8,2.8 0 1,1 5.6,0 a2.8,2.8 0 1,1 -5.6,0 Z" />
-    <!-- shaft -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 10.5,8.8 H 13.5 V 18 H 10.5 Z" />
-    <!-- biting -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 7,18 H 17 V 19.6 H 7 Z" />
-    <!-- teeth -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 7,19.8 H 8.6 V 21.6 H 7 Z" />
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M 15.4,19.8 H 17 V 21.6 H 15.4 Z" />
+    <!--
+        Content is scaled to 80% and centered within the adaptive-icon "safe zone"
+        (66dp / 108dp ≈ 61% of the viewport, centred at 12,12). Without this
+        scaling the key icon fills ~90% of the viewport height, causing launchers
+        to clip the bow and teeth — the icon appears zoomed / cropped.
+        Pivot is the visual centre of the key artwork (x=12, y=12.4).
+    -->
+    <group
+        android:pivotX="12"
+        android:pivotY="12.4"
+        android:scaleX="0.8"
+        android:scaleY="0.8">
+        <!-- key bow -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M12,6 m-2.8,0 a2.8,2.8 0 1,1 5.6,0 a2.8,2.8 0 1,1 -5.6,0 Z" />
+        <!-- shaft -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M 10.5,8.8 H 13.5 V 18 H 10.5 Z" />
+        <!-- biting -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M 7,18 H 17 V 19.6 H 7 Z" />
+        <!-- teeth -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M 7,19.8 H 8.6 V 21.6 H 7 Z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M 15.4,19.8 H 17 V 21.6 H 15.4 Z" />
+    </group>
 </vector>

@@ -25,7 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -145,7 +145,7 @@ fun KeyListScreen(
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {

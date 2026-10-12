@@ -31,6 +31,7 @@ class QuickSettingsTileService : TileService() {
         updateTile()
     }
 
+    @Suppress("DEPRECATION")  // Intent overload deprecated in API 34; PendingIntent variant not warranted here
     override fun onClick() {
         Log.d(TAG, "QS tile clicked")
         // Launch the lightweight key picker

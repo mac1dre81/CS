@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.credstow.app.data
 
 import android.content.Context
@@ -22,6 +24,8 @@ import javax.crypto.spec.SecretKeySpec
  * The DEK is generated once and cached for the process; it is never
  * persisted in plaintext, never logged, and never leaves the device.
  */
+@Suppress("DEPRECATION")  // MasterKey + EncryptedSharedPreferences deprecated in security-crypto 1.1.0+;
+                            // replacing them would require a major crypto-layer rewrite — out of scope
 class AndroidSecretKeyProvider(context: Context) : SecretKeyProvider {
 
     private val appContext = context.applicationContext

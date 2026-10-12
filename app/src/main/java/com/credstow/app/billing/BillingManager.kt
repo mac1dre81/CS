@@ -18,6 +18,7 @@ import com.android.billingclient.api.QueryPurchasesParams
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.credstow.app.core.AppConst
 import com.credstow.app.prefs.SettingsRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -98,6 +99,7 @@ class BillingManager(
     }
 
     /** Re-query owned INAPP purchases and persist the active set. */
+    @Suppress("DEPRECATION")  // Purchase.getSkus() deprecated in Billing 7.0; no replacement yet
     private fun refreshPurchases() {
         scope.launch(bgDispatcher) {
             try {
@@ -124,6 +126,7 @@ class BillingManager(
     fun syncPurchases() = refreshPurchases()
 
     /** Product details (carries the localized price) for the Pro unlock. */
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun queryProductDetails(): List<ProductDetails> = withContext(bgDispatcher) {
         try {
             val params = QueryProductDetailsParams.newBuilder()
