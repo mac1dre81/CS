@@ -1,5 +1,5 @@
 # ============================================================================
-# KeyVault - ProGuard / R8 rules
+# CredStow - ProGuard / R8 rules
 # ============================================================================
 # R8 minify + shrink is ENABLED for release builds. These rules preserve
 # reflection-dependent library code. API keys are never in source — they live
@@ -19,8 +19,8 @@
 # Keep our full type tree (ViewModels, use-cases, entities, etc.). Our sealed
 # Outcome/VaultException hierarchies and Provider/KeyStatus enums rely on
 # reflection-based serialization and runtime type checks.
--keep public class com.keyvault.app.** { *; }
--dontwarn com.keyvault.app.**
+-keep public class com.credstow.app.** { *; }
+-dontwarn com.credstow.app.**
 
 # kotlinx-serialization uses reflection for (de)serialization.
 -keepclassmembers class kotlin.Metadata { *; }
@@ -51,7 +51,7 @@
     @androidx.room.Ignore <fields>;
     @androidx.room.Index <fields>;
 }
--keep class com.keyvault.app.data.local.** { *; }
+-keep class com.credstow.app.data.local.** { *; }
 -keep class androidx.room.** { *; }
 
 # --- OkHttp / Okio (CRITICAL) --------------------------------------------------
