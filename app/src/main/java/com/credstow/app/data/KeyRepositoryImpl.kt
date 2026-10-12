@@ -71,6 +71,8 @@ class KeyRepositoryImpl(
                 status = KeyStatus.UNTESTED.name,
                 createdAt = now,
                 updatedAt = now,
+                expiryDate = key.expiryDate,
+                lastUsedAt = null,
             )
             dao.insert(entity)
             entity.id
@@ -97,6 +99,7 @@ class KeyRepositoryImpl(
                 cipherText = cipher.cipherText,
                 maskPreview = mask,
                 updatedAt = System.currentTimeMillis(),
+                expiryDate = update.expiryDate ?: existing.expiryDate,
             )
             dao.update(entity)
             Unit
@@ -115,10 +118,26 @@ class KeyRepositoryImpl(
         }
     }
 
+    override suspend fun setExpiryDate(id: String, expiryDate: Long?): Outcome<Unit> = withContext(ioDispatcher) {
+        wrap {
+            dao.updateExpiryDate(id, expiryDate, System.currentTimeMillis())
+            Unit
+        }
+    }
+
+    override suspend fun updateLastUsed(id: String): Outcome<Unit> = withContext(ioDispatcher) {
+        wrap {
+            dao.updateLastUsed(id, System.currentTimeMillis())
+            Unit
+        }
+    }
+
     override suspend fun getPlainKey(id: String): String? = withContext(ioDispatcher) {
         val entity = dao.getById(id) ?: return@withContext null
         val dek = secretKeyProvider.getOrCreateKey()
         val bytes = crypto.decrypt(CipherResult(entity.nonce, entity.cipherText), dek) ?: return@withContext null
+        // Track last-used timestamp (fire-and-forget; ignore failures).
+        try { dao.updateLastUsed(id, System.currentTimeMillis()) } catch (_: Throwable) {}
         String(bytes, StandardCharsets.UTF_8)
     }
 
@@ -134,6 +153,8 @@ class KeyRepositoryImpl(
                 createdAt = entity.createdAt,
                 updatedAt = entity.updatedAt,
                 status = entity.status,
+                expiryDate = entity.expiryDate,
+                lastUsedAt = entity.lastUsedAt,
             )
         }
     }
@@ -160,6 +181,8 @@ class KeyRepositoryImpl(
                         status = KeyStatus.from(entry.status).name,
                         createdAt = entry.createdAt,
                         updatedAt = now,
+                        expiryDate = entry.expiryDate,
+                        lastUsedAt = entry.lastUsedAt,
                     )
                 )
                 count++

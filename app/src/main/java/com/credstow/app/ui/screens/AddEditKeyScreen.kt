@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,6 +42,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -48,6 +52,8 @@ import com.credstow.app.model.Provider
 import com.credstow.app.ui.components.ApiKeyField
 import com.credstow.app.ui.components.providerLabel
 import com.credstow.app.ui.viewmodel.AddEditKeyViewModel
+import com.credstow.app.util.findActivity
+import com.credstow.app.util.formatDate
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -214,6 +220,59 @@ fun AddEditKeyScreen(
                 shape = RoundedCornerShape(12.dp),
                 enabled = !ui.isLoading,
             )
+
+            // Expiry date (Pro feature)
+            Spacer(Modifier.height(16.dp))
+            val expiry = ui.expiryDate
+            val nowMs = System.currentTimeMillis()
+            val expiryColor = if (expiry != null && expiry <= nowMs) MaterialTheme.colorScheme.error
+                else if (expiry != null && expiry <= nowMs + 7 * 24 * 60 * 60 * 1000L) Color(0xFFFF6B35)
+                else MaterialTheme.colorScheme.tertiary
+            val ctx = LocalContext.current
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = {
+                    val activity = ctx.findActivity() as? androidx.fragment.app.FragmentActivity
+                    if (activity != null) {
+                        val cal = java.util.Calendar.getInstance()
+                        if (expiry != null) cal.timeInMillis = expiry
+                        android.app.DatePickerDialog(
+                            activity,
+                            { _, y, m, d ->
+                                val c = java.util.Calendar.getInstance().apply {
+                                    set(y, m, d, 0, 0, 0)
+                                    set(java.util.Calendar.MILLISECOND, 0)
+                                }
+                                vm.onExpiryDate(c.timeInMillis)
+                            },
+                            cal.get(java.util.Calendar.YEAR),
+                            cal.get(java.util.Calendar.MONTH),
+                            cal.get(java.util.Calendar.DAY_OF_MONTH),
+                        ).show()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = null,
+                        tint = if (expiry != null) expiryColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                Text(
+                    text = if (expiry != null) formatDate(expiry)
+                        else stringResource(R.string.expiry_no_date),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (expiry != null) expiryColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                if (expiry != null) {
+                    TextButton(onClick = { vm.onExpiryDate(null) }) {
+                        Text(stringResource(R.string.expiry_clear))
+                    }
+                }
+            }
 
             Spacer(Modifier.height(80.dp))
         }

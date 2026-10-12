@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -60,8 +61,11 @@ import com.credstow.app.ui.components.ProviderBadge
 import com.credstow.app.ui.components.StatusChip
 import com.credstow.app.ui.components.providerLabel
 import com.credstow.app.ui.navigation.Routes
+import com.credstow.app.ui.util.BiometricAuth
 import com.credstow.app.ui.viewmodel.KeyDetailViewModel
+import com.credstow.app.util.formatDate
 import com.credstow.app.util.formatDateTime
+import com.credstow.app.util.findActivity
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -76,12 +80,25 @@ fun KeyDetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showDelete by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
+    val activity = context.findActivity() as? androidx.fragment.app.FragmentActivity
 
     LaunchedEffect(Unit) {
         vm.message.collect { snackbarHostState.showSnackbar(it) }
     }
     LaunchedEffect(Unit) {
         vm.deleted.collect { navController.popBackStack() }
+    }
+    LaunchedEffect(Unit) {
+        vm.events.collect { event ->
+            if (event is KeyDetailViewModel.Event.RequestBiometricAuth) {
+                val auth = activity?.let { BiometricAuth(it) }
+                val result = auth?.authenticate(
+                    title = context.getString(R.string.biometric_prompt_title),
+                    subtitle = context.getString(R.string.biometric_prompt_subtitle),
+                ) ?: false
+                if (result) vm.onBiometricAuthSuccess()
+            }
+        }
     }
 
     val supportsTest = key?.provider?.supportsTest == true
@@ -221,6 +238,36 @@ private fun KeyDetailContent(key: VaultKey, vm: KeyDetailViewModel, modifier: Mo
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        if (key.lastUsedAt != null) {
+            Text(
+                stringResource(R.string.detail_last_used, formatDateTime(key.lastUsedAt)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            Text(
+                stringResource(R.string.detail_last_used_never),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        // Expiration badge (Pro feature)
+        if (key.expiryDate != null) {
+            val now = System.currentTimeMillis()
+            val expiryColor = if (key.expiryDate <= now) MaterialTheme.colorScheme.error
+            else if (key.expiryDate <= now + 7 * 24 * 60 * 60 * 1000L) Color(0xFFFF6B35)
+            else MaterialTheme.colorScheme.tertiary
+            val expiryText = if (key.expiryDate <= now) stringResource(R.string.expiry_expired)
+            else stringResource(R.string.expiry_expires_on, formatDate(key.expiryDate))
+            Text(
+                expiryText,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
+                color = expiryColor,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
 
         if (key.notes.isNotBlank()) {
             Spacer(Modifier.height(12.dp))

@@ -84,6 +84,7 @@
     <string name="accessibility_font_size_summary">%1$s&#215; text size</string>
     <string name="display_system">Display settings</string>
     <string name="display_system_hint">Open Android display and font-size settings</string>
+    <string name="settings_key_sort">Key sort order</string>
     <string name="settings_import">Import backup</string>
     <string name="settings_privacy">Privacy policy</string>
     <!-- The app now bundles its privacy policy in assets/ and renders it
@@ -134,6 +135,20 @@
     <string name="status_untested">Untested</string>
     <string name="status_testing">Testing…</string>
     <string name="status_error">Error</string>
+
+    <!-- Key expiration (Pro) -->
+    <string name="expiry_no_date">No expiration set</string>
+    <string name="expiry_expires_on">Expires %1$s</string>
+    <string name="expiry_expired">Expired</string>
+    <string name="expiry_clear">Clear</string>
+    <string name="detail_last_used">Last used %1$s</string>
+    <string name="detail_last_used_never">Never used</string>
+
+    <!-- Sort order (Pro) -->
+    <string name="sort_created">Sort by: newest first</string>
+    <string name="sort_label">Sort by: name (A→Z)</string>
+    <string name="sort_last_used">Sort by: last used</string>
+    <string name="sort_expiry">Sort by: expires soon</string>
 
     <!-- Accessibility -->
     <string name="accessibility_provider_selector">Select provider</string>

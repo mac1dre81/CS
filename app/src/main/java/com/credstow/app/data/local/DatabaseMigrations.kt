@@ -32,17 +32,21 @@ import androidx.room.migration.Migration
 object DatabaseMigrations {
 
     /** The highest schema version currently known to this codebase. */
-    const val CURRENT_VERSION = 1
+    const val CURRENT_VERSION = 2
 
     /**
      * Ordered list of forward migrations registered with Room.
-     * Empty for v1; add `Migration(1, 2) { ... }` here when v2 lands.
      */
     val ALL: List<Migration> = listOf(
-        // --- v1 → v2 (placeholder: fill in when schema changes) ---
-        // Migration(1, 2) { db ->
-        //     db.execSQL("ALTER TABLE vault_keys ADD COLUMN new_column TEXT NOT NULL DEFAULT ''")
-        // },
+        // --- v1 → v2: add Pro feature columns ---
+        // expiry_date: optional epoch-ms after which a key is considered expired.
+        // last_used_at: epoch-ms of the most recent copy/test (for last-used sort).
+        // Both are nullable so existing rows get NULL (semantically "no expiry",
+        // "never used") — no data transformation required.
+        Migration(1, 2) { db ->
+            db.execSQL("ALTER TABLE vault_keys ADD COLUMN expiry_date INTEGER")
+            db.execSQL("ALTER TABLE vault_keys ADD COLUMN last_used_at INTEGER")
+        },
     )
 }
 

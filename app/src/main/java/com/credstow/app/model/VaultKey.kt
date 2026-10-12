@@ -18,5 +18,7 @@ data class VaultKey(
     val createdAt: Long,
     val updatedAt: Long,
     val providerId: String = "",
+    val expiryDate: Long? = null,
+    val lastUsedAt: Long? = null,
 )
 

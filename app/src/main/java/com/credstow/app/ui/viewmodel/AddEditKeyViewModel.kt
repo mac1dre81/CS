@@ -31,6 +31,7 @@ data class AddEditUiState(
     val existingMaskedKey: String? = null,
     val replacingKey: Boolean = false,
     val saveError: String? = null,
+    val expiryDate: Long? = null,
 )
 
 class AddEditKeyViewModel(
@@ -64,6 +65,7 @@ class AddEditKeyViewModel(
                         label = k.label,
                         notes = k.notes,
                         existingMaskedKey = k.maskedKey,
+                        expiryDate = k.expiryDate,
                         customProviderName =
                             if (k.provider == Provider.OTHER && k.providerId.isNotBlank() && k.providerId != Provider.OTHER.id)
                                 k.providerId else "",
@@ -81,6 +83,7 @@ class AddEditKeyViewModel(
     fun onApiKey(value: String) { _ui.update { it.copy(apiKey = value) } }
     fun toggleApiKeyVisibility() { _ui.update { it.copy(apiKeyVisible = !it.apiKeyVisible) } }
     fun onNotes(value: String) { _ui.update { it.copy(notes = value) } }
+    fun onExpiryDate(value: Long?) { _ui.update { it.copy(expiryDate = value) } }
     fun onReplaceKey() { _ui.update { it.copy(replacingKey = true, existingMaskedKey = null, apiKey = "") } }
 
     fun save() {
@@ -88,26 +91,26 @@ class AddEditKeyViewModel(
         when {
             s.isEdit && !s.replacingKey -> {
                 // metadata-only edit: keep the existing encrypted secret.
-                viewModelScope.launch { saveEdit(editKeyId!!, s.provider, s.label, apiKey = null, s.notes, s.customProviderName) }
+                viewModelScope.launch { saveEdit(editKeyId!!, s.provider, s.label, apiKey = null, s.notes, s.customProviderName, s.expiryDate) }
             }
             s.isEdit -> {
                 val key = s.apiKey.trim()
                 if (key.isBlank()) { _ui.update { it.copy(saveError = "API key is required") }; return }
                 if (s.label.isBlank()) { _ui.update { it.copy(saveError = "Label is required") }; return }
-                viewModelScope.launch { saveEdit(editKeyId!!, s.provider, s.label, key, s.notes, s.customProviderName) }
+                viewModelScope.launch { saveEdit(editKeyId!!, s.provider, s.label, key, s.notes, s.customProviderName, s.expiryDate) }
             }
             else -> {
                 val key = s.apiKey.trim()
                 if (key.isBlank()) { _ui.update { it.copy(saveError = "API key is required") }; return }
                 if (s.label.isBlank()) { _ui.update { it.copy(saveError = "Label is required") }; return }
-                viewModelScope.launch { saveAdd(s.provider, s.label, key, s.notes, s.customProviderName) }
+                viewModelScope.launch { saveAdd(s.provider, s.label, key, s.notes, s.customProviderName, s.expiryDate) }
             }
         }
     }
 
-    private suspend fun saveAdd(provider: Provider, label: String, apiKey: String, notes: String, customProviderName: String) {
+    private suspend fun saveAdd(provider: Provider, label: String, apiKey: String, notes: String, customProviderName: String, expiryDate: Long?) {
         _ui.update { it.copy(isSaving = true, saveError = null) }
-        when (val outcome = addKey(NewKey(provider, label, apiKey, notes, customProviderName))) {
+        when (val outcome = addKey(NewKey(provider, label, apiKey, notes, customProviderName, expiryDate))) {
             is Outcome.Success -> { _ui.update { it.copy(isSaving = false) }; saved.emit(Unit) }
             is Outcome.Error -> {
                 _ui.update { it.copy(isSaving = false, saveError = outcome.message) }
@@ -116,9 +119,9 @@ class AddEditKeyViewModel(
         }
     }
 
-    private suspend fun saveEdit(id: String, provider: Provider, label: String, apiKey: String?, notes: String, customProviderName: String) {
+    private suspend fun saveEdit(id: String, provider: Provider, label: String, apiKey: String?, notes: String, customProviderName: String, expiryDate: Long?) {
         _ui.update { it.copy(isSaving = true, saveError = null) }
-        when (val outcome = updateKey(UpdateKey(id, provider, label, apiKey, notes, customProviderName))) {
+        when (val outcome = updateKey(UpdateKey(id, provider, label, apiKey, notes, customProviderName, expiryDate))) {
             is Outcome.Success -> { saved.emit(Unit); _ui.update { it.copy(isSaving = false) } }
             is Outcome.Error -> { _ui.update { it.copy(isSaving = false, saveError = outcome.message) } }
         }

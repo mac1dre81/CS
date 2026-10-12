@@ -20,6 +20,9 @@ interface KeyDao {
     @Query("SELECT * FROM vault_keys ORDER BY created_at DESC")
     fun observeAll(): Flow<List<KeyEntity>>
 
+    @Query("SELECT * FROM vault_keys ORDER BY :sortBy DESC")
+    fun observeAllSorted(sortBy: String): Flow<List<KeyEntity>>
+
     @Query("SELECT * FROM vault_keys WHERE id = :id")
     suspend fun getById(id: String): KeyEntity?
 
@@ -32,6 +35,12 @@ interface KeyDao {
     @Update
     suspend fun update(entity: KeyEntity)
 
+    @Query("UPDATE vault_keys SET expiry_date = :expiryDate, updated_at = :updatedAt WHERE id = :id")
+    suspend fun updateExpiryDate(id: String, expiryDate: Long?, updatedAt: Long)
+
+    @Query("UPDATE vault_keys SET last_used_at = :lastUsedAt WHERE id = :id")
+    suspend fun updateLastUsed(id: String, lastUsedAt: Long)
+
     @Query("DELETE FROM vault_keys WHERE id = :id")
     suspend fun deleteById(id: String)
 
@@ -39,3 +48,11 @@ interface KeyDao {
     suspend fun clearAll(): Int
 }
 
+/** Sort column identifiers — matched against KeyEntity column names in SQL ORDER BY. */
+enum class SortBy(val column: String) {
+    CreatedAt("created_at"),
+    LastUsedAt("last_used_at"),
+    ExpiryDate("expiry_date"),
+    Label("label"),
+    ;
+}

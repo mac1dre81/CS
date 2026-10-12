@@ -18,5 +18,7 @@ data class BackupEntry(
     val createdAt: Long,
     val updatedAt: Long,
     val status: String,
+    val expiryDate: Long? = null,
+    val lastUsedAt: Long? = null,
 )
 

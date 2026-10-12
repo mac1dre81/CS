@@ -64,6 +64,7 @@ import com.credstow.app.ui.components.FilterRow
 import com.credstow.app.ui.components.KeyListItem
 import com.credstow.app.ui.navigation.Routes
 import com.credstow.app.domain.usecase.KeyFilter
+import com.credstow.app.ui.util.BiometricAuth
 import com.credstow.app.ui.viewmodel.KeyListViewModel
 import com.credstow.app.di.ServiceLocator
 import com.credstow.app.util.findActivity
@@ -95,6 +96,8 @@ fun KeyListScreen(
     // requires a CompositionLocal context, which is unavailable inside LaunchedEffect).
     val deletedMsg = stringResource(R.string.snackbar_key_deleted)
     val undoLabel = stringResource(R.string.snackbar_undo)
+    val biometricTitle = stringResource(R.string.biometric_prompt_title)
+    val biometricSubtitle = stringResource(R.string.biometric_prompt_subtitle)
 
     // Pre-load a free interstitial while the home screen is visible so it's
     // ready when a milestone / session trigger fires. Pro users never get here.
@@ -138,6 +141,16 @@ fun KeyListScreen(
                     // AppCompatActivity hosting this composable (= FragmentActivity).
                     activity?.let { a ->
                         ServiceLocator.getInstance(ctx).interstitialAdManager.show(a) { }
+                    }
+                }
+                is KeyListViewModel.Event.RequestBiometricAuth -> {
+                    activity?.let { a ->
+                        val auth = BiometricAuth(a)
+                        val result = auth.authenticate(
+                            title = biometricTitle,
+                            subtitle = biometricSubtitle,
+                        )
+                        if (result) vm.onBiometricAuthSuccess()
                     }
                 }
             }

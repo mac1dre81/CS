@@ -7,9 +7,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.first
 import com.credstow.app.core.AppConst
+import com.credstow.app.data.local.SortBy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -46,6 +48,10 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     /** Epoch-ms of the last shown interstitial (for the session/cooldown rule). */
     val lastInterstitialShownAt: Flow<Long> = store.data
         .map { it[Keys.LastInterstitialShownAt] ?: 0L }
+
+    /** Pro feature: user's preferred key list sort order. */
+    val keySortBy: Flow<SortBy> = store.data
+        .map { fromSortBy(it[Keys.KeySortBy]) }
 
     suspend fun isProNow(): Boolean = isPro.first()
 
@@ -84,6 +90,13 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     suspend fun getPurchasedProductIds(): Set<String> =
         store.data.first()[Keys.PurchasedProductIds] ?: emptySet()
 
+    suspend fun setKeySortBy(sortBy: SortBy) {
+        store.edit { it[Keys.KeySortBy] = sortBy.column }
+    }
+
+    private fun fromSortBy(value: String?): SortBy =
+        SortBy.entries.firstOrNull { it.column == value } ?: SortBy.CreatedAt
+
     object Keys {
         val OnboardingCompleted = booleanPreferencesKey("onboarding_completed")
         val ClipboardAutoClearSeconds = intPreferencesKey("clipboard_auto_clear_seconds")
@@ -93,6 +106,7 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         val LastInterstitialShownAt = longPreferencesKey("last_interstitial_shown_at")
         val FontScale = floatPreferencesKey("font_scale")
         val PurchasedProductIds = stringSetPreferencesKey("purchased_product_ids")
+        val KeySortBy = stringPreferencesKey("key_sort_by")
     }
 }
 

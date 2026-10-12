@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.TopAppBar
@@ -65,6 +66,7 @@ import androidx.navigation.NavHostController
 import com.credstow.app.R
 import com.credstow.app.billing.BillingEvent
 import com.credstow.app.core.AppConst
+import com.credstow.app.data.local.SortBy
 import com.credstow.app.ui.theme.CredStowTheme
 import com.credstow.app.ui.viewmodel.SettingsViewModel
 import com.credstow.app.util.findActivity
@@ -89,6 +91,7 @@ fun SettingsScreen(
     var importPw by rememberSaveable { mutableStateOf("") }
     var exportPw by rememberSaveable { mutableStateOf("") }
     var showUpgrade by rememberSaveable { mutableStateOf(false) }
+    var sortDialog by rememberSaveable { mutableStateOf(false) }
 
     val activity = LocalContext.current.findActivity()
 
@@ -226,6 +229,13 @@ fun SettingsScreen(
                 },
             )
             SettingsRow(
+                title = stringResource(R.string.settings_key_sort),
+                subtitle = vm.sortLabel,
+                icon = Icons.Default.DisplaySettings,
+                enabled = isPro,
+                onClick = { if (isPro) sortDialog = true else showUpgrade = true },
+            )
+            SettingsRow(
                 title = stringResource(R.string.display_system),
                 subtitle = stringResource(R.string.display_system_hint),
                 icon = Icons.Default.DisplaySettings,
@@ -270,6 +280,44 @@ fun SettingsScreen(
         UpgradeDialog(
             onDismiss = { showUpgrade = false },
             onUpgrade = { vm.unlockPro(activity); showUpgrade = false },
+        )
+    }
+
+    if (sortDialog) {
+        val currentSort by vm.keySortBy.collectAsState()
+        AlertDialog(
+            onDismissRequest = { sortDialog = false },
+            title = { Text(stringResource(R.string.settings_key_sort)) },
+            confirmButton = {
+                TextButton(onClick = { sortDialog = false }) { Text(stringResource(R.string.action_save)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { sortDialog = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
+            text = {
+                Column {
+                    val options = listOf(
+                        SortBy.CreatedAt to stringResource(R.string.sort_created),
+                        SortBy.Label to stringResource(R.string.sort_label),
+                        SortBy.LastUsedAt to stringResource(R.string.sort_last_used),
+                        SortBy.ExpiryDate to stringResource(R.string.sort_expiry),
+                    )
+                    options.forEach { (sort, label) ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { vm.setKeySortBy(sort); sortDialog = false },
+                        ) {
+                            RadioButton(
+                                selected = currentSort == sort,
+                                onClick = { vm.setKeySortBy(sort); sortDialog = false },
+                            )
+                            Text(label, modifier = Modifier.padding(start = 8.dp))
+                        }
+                    }
+                }
+            },
         )
     }
 

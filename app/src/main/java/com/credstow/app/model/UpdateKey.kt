@@ -14,5 +14,6 @@ data class UpdateKey(
     val apiKeyValue: String?,
     val notes: String,
     val customProviderName: String = "",
+    val expiryDate: Long? = null,
 )
 

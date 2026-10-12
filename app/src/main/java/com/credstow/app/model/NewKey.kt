@@ -7,5 +7,6 @@ data class NewKey(
     val apiKeyValue: String,
     val notes: String,
     val customProviderName: String = "",
+    val expiryDate: Long? = null,
 )
 

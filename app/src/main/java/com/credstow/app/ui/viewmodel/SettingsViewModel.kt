@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.credstow.app.billing.BillingEvent
 import com.credstow.app.billing.BillingManager
 import com.credstow.app.core.AppConst
+import com.credstow.app.data.local.SortBy
 import com.credstow.app.core.Outcome
 import com.credstow.app.domain.ProState
 import com.credstow.app.domain.usecase.ExportBackupUseCase
@@ -38,6 +39,17 @@ class SettingsViewModel(
 
     val fontScale: StateFlow<Float> = settings.fontScale
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppConst.FONT_SCALE_DEFAULT)
+
+    val keySortBy: StateFlow<SortBy> = settings.keySortBy
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SortBy.CreatedAt)
+
+    val sortLabel: String
+        get() = when (keySortBy.value) {
+            SortBy.CreatedAt -> "Newest first"
+            SortBy.Label -> "Name (A→Z)"
+            SortBy.LastUsedAt -> "Last used"
+            SortBy.ExpiryDate -> "Expires soon"
+        }
 
     val biometricLockEnabled: StateFlow<Boolean> = settings.biometricLockEnabled
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
@@ -77,6 +89,10 @@ class SettingsViewModel(
 
     fun setFontScale(scale: Float) {
         viewModelScope.launch { settings.setFontScale(scale) }
+    }
+
+    fun setKeySortBy(sortBy: SortBy) {
+        viewModelScope.launch { settings.setKeySortBy(sortBy) }
     }
 
     fun unlockPro(activity: Activity) {

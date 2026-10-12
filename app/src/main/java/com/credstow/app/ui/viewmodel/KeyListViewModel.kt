@@ -12,7 +12,10 @@ import com.credstow.app.domain.usecase.SearchAndFilterUseCase
 import com.credstow.app.model.KeyStatus
 import com.credstow.app.model.Provider
 import com.credstow.app.model.VaultKey
+import com.credstow.app.AuthTracker
+import com.credstow.app.R
 import com.credstow.app.ads.AdRules
+import com.credstow.app.data.local.SortBy
 import com.credstow.app.prefs.SettingsRepository
 import com.credstow.app.util.ClipboardHelper
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -60,20 +63,38 @@ class KeyListViewModel(
     private val isProState = proState.isPro
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val keySortBy = settings.keySortBy
+        .stateIn(viewModelScope, SharingStarted.Eagerly, SortBy.CreatedAt)
+
     private val _filter = MutableStateFlow(KeyFilter())
     val filter: StateFlow<KeyFilter> = _filter
 
     /** IDs of keys that have been swiped away but not yet confirmed-deleted. */
     private val pendingDeleteIds = MutableStateFlow<Set<String>>(emptySet())
 
-    val uiState: StateFlow<UiState> = combine(allKeys, _filter, isProState, pendingDeleteIds) { keys, f, pro, pending ->
+    val uiState: StateFlow<UiState> = combine(allKeys, _filter, isProState, pendingDeleteIds, keySortBy) { keys, f, pro, pending, sort ->
+        val filtered = searchAndFilter(keys, f).filterNot { it.id in pending }
+        val sorted = sortKeys(filtered, sort)
         UiState(
-            keys = searchAndFilter(keys, f).filterNot { it.id in pending },
+            keys = sorted,
             filter = f,
             isLoading = false,
             isPro = pro,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(isLoading = true))
+
+    private fun sortKeys(keys: List<VaultKey>, sort: SortBy): List<VaultKey> = when (sort) {
+        SortBy.CreatedAt -> keys.sortedByDescending { it.createdAt }
+        SortBy.Label -> keys.sortedBy { it.label }
+        SortBy.LastUsedAt -> keys.sortedWith(
+            compareByDescending<VaultKey> { it.lastUsedAt ?: 0L }
+                .thenByDescending { it.createdAt }
+        )
+        SortBy.ExpiryDate -> keys.sortedWith(
+            compareBy<VaultKey> { it.expiryDate ?: Long.MAX_VALUE }
+                .thenByDescending { it.createdAt }
+        )
+    }
 
     /** One-shot events surfaced to the UI. */
     private val _events = MutableSharedFlow<Event>(extraBufferCapacity = 8)
@@ -87,6 +108,8 @@ class KeyListViewModel(
         data object ShowInterstitial : Event
         /** Emitted when a key is swiped-to-delete; UI must show an Undo Snackbar. */
         data class PendingDelete(val key: VaultKey) : Event
+        /** Emitted when biometric re-auth is required before a copy/test action can proceed. */
+        data object RequestBiometricAuth : Event
     }
 
     fun onSearch(query: String) {
@@ -137,7 +160,30 @@ class KeyListViewModel(
         }
     }
 
+    /** ID of the key pending copy after biometric re-auth. */
+    private var pendingCopyKeyId: String? = null
+
     fun onCopy(id: String) {
+        viewModelScope.launch {
+            if (AuthTracker.requiresUnlock(settings)) {
+                pendingCopyKeyId = id
+                _events.emit(Event.RequestBiometricAuth)
+            } else {
+                doCopy(id)
+            }
+        }
+    }
+
+    /** Called by the UI after successful biometric authentication. */
+    fun onBiometricAuthSuccess() {
+        AuthTracker.lastAuthenticatedAt = System.currentTimeMillis()
+        pendingCopyKeyId?.let { id ->
+            pendingCopyKeyId = null
+            doCopy(id)
+        }
+    }
+
+    private fun doCopy(id: String) {
         viewModelScope.launch {
             val autoClear = settings.clipboardAutoClearSeconds.first()
             val plain = repository.getPlainKey(id)

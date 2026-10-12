@@ -2,6 +2,7 @@ package com.credstow.app.data
 
 import com.credstow.app.data.local.KeyDao
 import com.credstow.app.data.local.KeyEntity
+import com.credstow.app.data.local.SortBy
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,11 +19,23 @@ class FakeKeyDao : KeyDao {
 
     override suspend fun getAll(): List<KeyEntity> = sorted()
     override fun observeAll(): Flow<List<KeyEntity>> = live
+    override fun observeAllSorted(sortBy: String): Flow<List<KeyEntity>> = live
     override suspend fun getById(id: String): KeyEntity? = store[id]
     override suspend fun count(): Int = store.size
     override suspend fun insert(entity: KeyEntity) { store[entity.id] = entity; push() }
     override suspend fun update(entity: KeyEntity) { store[entity.id] = entity; push() }
+    override suspend fun updateExpiryDate(id: String, expiryDate: Long?, updatedAt: Long) {
+        val e = store[id] ?: return
+        store[id] = e.copy(expiryDate = expiryDate, updatedAt = updatedAt); push()
+    }
+    override suspend fun updateLastUsed(id: String, lastUsedAt: Long) {
+        val e = store[id] ?: return
+        store[id] = e.copy(lastUsedAt = lastUsedAt); push()
+    }
     override suspend fun deleteById(id: String) { store.remove(id); push() }
     override suspend fun clearAll(): Int { val n = store.size; store.clear(); push(); return n }
 }
 
+// Re-export SortBy for tests that want to reference it.
+@Suppress("unused")
+typealias SortColumn = SortBy

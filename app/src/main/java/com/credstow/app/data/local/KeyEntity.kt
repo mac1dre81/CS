@@ -28,6 +28,8 @@ data class KeyEntity(
     @ColumnInfo(name = "status") val status: String,
     @ColumnInfo(name = "created_at") val createdAt: Long,
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
+    @ColumnInfo(name = "expiry_date") val expiryDate: Long? = null,
+    @ColumnInfo(name = "last_used_at") val lastUsedAt: Long? = null,
 ) {
     fun toDomain(): VaultKey = VaultKey(
         id = id,
@@ -39,6 +41,8 @@ data class KeyEntity(
         createdAt = createdAt,
         updatedAt = updatedAt,
         providerId = providerId,
+        expiryDate = expiryDate,
+        lastUsedAt = lastUsedAt,
     )
 }
 

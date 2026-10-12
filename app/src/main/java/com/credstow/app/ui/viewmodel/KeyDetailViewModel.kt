@@ -2,6 +2,7 @@ package com.credstow.app.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.credstow.app.AuthTracker
 import com.credstow.app.core.Outcome
 import com.credstow.app.domain.KeyRepository
 import com.credstow.app.domain.ProState
@@ -51,6 +52,17 @@ class KeyDetailViewModel(
     val message = MutableSharedFlow<String>(extraBufferCapacity = 8)
     val deleted = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
+    /** One-shot events surfaced to the UI. */
+    private val _events = MutableSharedFlow<Event>(extraBufferCapacity = 8)
+    val events = _events.asSharedFlow()
+
+    /** When set, the screen should show a biometric prompt; on success call [onBiometricAuthSuccess]. */
+    private var pendingAction: (() -> Unit)? = null
+
+    sealed interface Event {
+        data object RequestBiometricAuth : Event
+    }
+
     init { refresh() }
 
     fun refresh() {
@@ -59,7 +71,26 @@ class KeyDetailViewModel(
         }
     }
 
+    /** Called by the UI after a successful biometric authentication. */
+    fun onBiometricAuthSuccess() {
+        AuthTracker.lastAuthenticatedAt = System.currentTimeMillis()
+        val action = pendingAction
+        pendingAction = null
+        action?.invoke()
+    }
+
     fun onCopy() {
+        viewModelScope.launch {
+            if (AuthTracker.requiresUnlock(settings)) {
+                pendingAction = { doCopy() }
+                _events.emit(Event.RequestBiometricAuth)
+            } else {
+                doCopy()
+            }
+        }
+    }
+
+    private fun doCopy() {
         viewModelScope.launch {
             val plain = repository.getPlainKey(keyId)
             if (plain == null) {
@@ -83,6 +114,17 @@ class KeyDetailViewModel(
             return
         }
         viewModelScope.launch {
+            if (AuthTracker.requiresUnlock(settings)) {
+                pendingAction = { doTest() }
+                _events.emit(Event.RequestBiometricAuth)
+            } else {
+                doTest()
+            }
+        }
+    }
+
+    private fun doTest() {
+        viewModelScope.launch {
             _isTesting.value = true
             message.emit("Testing key…")
             val outcome = testKey(keyId)
@@ -99,6 +141,26 @@ class KeyDetailViewModel(
         viewModelScope.launch {
             deleteKey(keyId)
             deleted.emit(Unit)
+        }
+    }
+
+    /** Pro feature: set or clear the key's expiration date. */
+    fun onSetExpiryDate(expiryDate: Long?) {
+        if (!isPro.value) {
+            viewModelScope.launch { message.emit("Key expiration is a Pro feature") }
+            return
+        }
+        viewModelScope.launch {
+            val outcome = repository.setExpiryDate(keyId, expiryDate)
+            when (outcome) {
+                is Outcome.Success -> {
+                    refresh()
+                    val text = if (expiryDate == null) "Expiration cleared"
+                        else "Expiration set"
+                    message.emit(text)
+                }
+                is Outcome.Error -> message.emit(outcome.message)
+            }
         }
     }
 

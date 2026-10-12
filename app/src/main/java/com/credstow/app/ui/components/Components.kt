@@ -213,6 +213,19 @@ fun KeyListItem(
                 }
                 Spacer(Modifier.width(8.dp))
                 StatusChip(status = key.status)
+                if (key.expiryDate != null) {
+                    val now = System.currentTimeMillis()
+                    val color = if (key.expiryDate <= now) MaterialTheme.colorScheme.error
+                    else if (key.expiryDate <= now + 7 * 24 * 60 * 60 * 1000L) Color(0xFFFF6B35)
+                    else MaterialTheme.colorScheme.tertiary
+                    Spacer(Modifier.width(4.dp))
+                    Box(
+                        Modifier
+                            .size(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(color),
+                    )
+                }
             }
         },
         modifier = modifier

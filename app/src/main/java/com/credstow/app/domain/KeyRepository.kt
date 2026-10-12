@@ -30,6 +30,12 @@ interface KeyRepository {
 
     suspend fun updateStatus(id: String, status: KeyStatus): Outcome<Unit>
 
+    /** Update the key's optional expiration timestamp (Pro feature). */
+    suspend fun setExpiryDate(id: String, expiryDate: Long?): Outcome<Unit>
+
+    /** Record that this key was recently used (copy/test) — updates last_used_at. */
+    suspend fun updateLastUsed(id: String): Outcome<Unit>
+
     /** Decrypt a single key for copy-to-clipboard / test ping. Never cached outside the caller. */
     suspend fun getPlainKey(id: String): String?
 
