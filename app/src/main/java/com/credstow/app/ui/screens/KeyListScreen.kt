@@ -266,7 +266,7 @@ private fun KeyListContent(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(vertical = 8.dp),
+        contentPadding = PaddingValues(vertical = 4.dp),
     ) {
         stickyHeader {
             Column(Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -275,7 +275,7 @@ private fun KeyListContent(
                     onValueChange = { vm.onSearch(it) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(8.dp),
                     placeholder = { Text(stringResource(R.string.list_search_hint)) },
                     singleLine = true,
                     maxLines = 1,
@@ -333,7 +333,7 @@ private fun KeyListContent(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 },
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
             )
         }
     }

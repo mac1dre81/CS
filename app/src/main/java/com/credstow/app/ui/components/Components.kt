@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -186,17 +187,17 @@ fun KeyListItem(
         headlineContent = {
             Text(
                 text = key.label,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
             )
         },
         supportingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                ProviderBadge(provider = key.provider, size = 24.dp)
-                Spacer(Modifier.width(8.dp))
+                ProviderBadge(provider = key.provider, size = 20.dp)
+                Spacer(Modifier.width(6.dp))
                 Text(
                     providerLabel(key.provider, key.providerId),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -204,7 +205,7 @@ fun KeyListItem(
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(3.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
                 ) {
                     Text(
@@ -212,11 +213,11 @@ fun KeyListItem(
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Monospace,
                         color = statusColor(key.status),
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
                         maxLines = 1,
                     )
                 }
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(6.dp))
                 StatusChip(status = key.status)
                 if (key.expiryDate != null) {
                     val now = System.currentTimeMillis()
