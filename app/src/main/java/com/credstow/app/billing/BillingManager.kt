@@ -172,6 +172,34 @@ class BillingManager(
         }
     }
 
+    /**
+     * Opens the Google Play Store's "Redeem code" page so the user can enter
+     * a one-time use promo code for the `pro_unlock` product.
+     *
+     * After redemption, the user should tap **"Restore purchases"** in Settings
+     * so [BillingManager.syncPurchases] queries Play for the now-owned product
+     * and updates [ProState].
+     *
+     * This uses an external Intent (ACTION_VIEW) rather than a Billing API call
+     * because Google does not provide an in-app API for code redemption —
+     * the Play Store app handles the actual entry + validation.
+     */
+    fun redeemPromoCode(activity: Activity) {
+        try {
+            val uri = android.net.Uri.parse("https://play.google.com/redeem")
+            activity.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, uri))
+        } catch (e: Throwable) {
+            scope.launch {
+                _events.emit(
+                    BillingEvent.Error(
+                        "Unable to open the Play Store. Please redeem your code manually " +
+                            "in the Play Store app → Menu → Redeem.",
+                    ),
+                )
+            }
+        }
+    }
+
     override fun onPurchasesUpdated(result: BillingResult, purchases: List<Purchase>?) {
         if (result.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
             process(purchases)

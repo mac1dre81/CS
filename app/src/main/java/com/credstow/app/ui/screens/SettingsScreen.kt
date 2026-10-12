@@ -271,6 +271,20 @@ fun SettingsScreen(
                 enabled = true,
                 onClick = { vm.refreshPro() },
             )
+            SettingsRow(
+                title = stringResource(R.string.settings_redeem_title),
+                subtitle = stringResource(R.string.settings_redeem_summary),
+                icon = Icons.Default.Star,
+                enabled = true,
+                onClick = { vm.redeemPromoCode(activity) },
+            )
+            SettingsRow(
+                title = stringResource(R.string.settings_restore_purchases),
+                subtitle = stringResource(R.string.settings_restore_summary),
+                icon = Icons.Default.CloudDownload,
+                enabled = true,
+                onClick = { vm.refreshPro() },
+            )
 
             Spacer(Modifier.height(80.dp))
         }

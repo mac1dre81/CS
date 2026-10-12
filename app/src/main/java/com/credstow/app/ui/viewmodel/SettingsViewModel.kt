@@ -99,6 +99,10 @@ class SettingsViewModel(
         billingManager.launchBillingFlow(activity)
     }
 
+    fun redeemPromoCode(activity: Activity) {
+        billingManager.redeemPromoCode(activity)
+    }
+
     fun performExport(password: String) {
         viewModelScope.launch {
             _exporting.value = true
