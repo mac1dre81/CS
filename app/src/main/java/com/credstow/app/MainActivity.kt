@@ -1,4 +1,4 @@
-package com.credestow.app
+package com.credstow.app
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
