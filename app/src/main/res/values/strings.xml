@@ -9,6 +9,7 @@
 
     <!-- Splash -->
     <string name="splash_tagline">All your AI keys. One secure place.</string>
+    <string name="splash_loading">Loading</string>
 
     <!-- Onboarding -->
     <string name="onboarding_title">Welcome to CredStow</string>

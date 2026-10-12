@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.credstow.app.AuthTracker
@@ -131,9 +133,13 @@ fun LockScreen(
             )
             if (!authAttempted) {
                 Spacer(Modifier.height(24.dp))
+                val loadingDesc = stringResource(R.string.lock_screen_prompt)
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.onPrimary,
                     strokeWidth = 2.dp,
+                    modifier = Modifier.semantics {
+                        contentDescription = loadingDesc
+                    },
                 )
             }
         }

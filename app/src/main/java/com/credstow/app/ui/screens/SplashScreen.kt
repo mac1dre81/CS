@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import com.credstow.app.R
@@ -138,7 +140,7 @@ fun SplashScreen(
             AppKeyIcon(Modifier.size(96.dp), tint = MaterialTheme.colorScheme.onPrimary)
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "CredStow",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
@@ -148,9 +150,13 @@ fun SplashScreen(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(Modifier.height(24.dp))
+            val loadingDesc = stringResource(R.string.splash_loading)
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.onPrimary,
                 strokeWidth = 2.dp,
+                modifier = Modifier.semantics {
+                    contentDescription = loadingDesc
+                },
             )
         }
     }
