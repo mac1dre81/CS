@@ -153,6 +153,9 @@ fun KeyListScreen(
                         )
                         if (result) vm.onBiometricAuthSuccess()
                     }
+                    // After biometric-authenticated copy completes on this screen,
+                    // we're at a natural pause point — let the VM re-check ad rules.
+                    vm.onPausePoint()
                 }
             }
         }

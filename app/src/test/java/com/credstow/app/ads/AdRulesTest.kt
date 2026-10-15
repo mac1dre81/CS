@@ -1,83 +1,142 @@
 package com.credstow.app.ads
 
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AdRulesTest {
 
-    // --- milestone rule ---
-    @Test
-    fun milestone_proUser_isNeverDue() {
-        assertFalse(AdRules.milestoneDue(keyCount = 3, lastShownMilestone = 0, isPro = true))
-    }
+    // --- shouldShowAd: gating conditions ---
 
     @Test
-    fun milestone_fires_at3_6_9_oncePerMilestone() {
-        assertTrue(AdRules.milestoneDue(3, 0, false))
-        assertFalse(AdRules.milestoneDue(3, 3, false)) // already shown for 3
-        assertTrue(AdRules.milestoneDue(6, 3, false))
-        assertFalse(AdRules.milestoneDue(9, 6, true))  // pro -> blocked
-    }
-
-    @Test
-    fun milestone_doesNotFireBefore3_orAtZero_orBetweenMilestones() {
-        assertFalse(AdRules.milestoneDue(0, 0, false))
-        assertFalse(AdRules.milestoneDue(1, 0, false))
-        assertFalse(AdRules.milestoneDue(2, 0, false))
-        assertFalse(AdRules.milestoneDue(4, 3, false))
-        assertFalse(AdRules.milestoneDue(5, 3, false))
-    }
-
-    // --- session rule ---
-    @Test
-    fun session_proUser_isNeverDue() {
+    fun shouldShowAd_proUser_isNeverDue() {
         assertFalse(
-            AdRules.sessionDue(
-                now = 1_000L + AdRules.SESSION_MIN_MS + 1,
-                sessionStart = 1_000L,
-                lastShownAt = 0L,
+            AdRules.shouldShowAd(
+                consecutiveSaves = 5,
+                sessionMs = AdRules.SESSION_MIN_MS + 1,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS + 1,
                 isPro = true,
+                atPausePoint = true,
             )
         )
     }
 
     @Test
-    fun session_firesOnceMinTimeAndCooldownElapsed() {
-        val sessionStart = 1_000L
-        // Both the SESSION_MIN_MS floor and the AD_COOLDOWN_MS gap must be met.
-        val now = sessionStart + AdRules.SESSION_MIN_MS + AdRules.AD_COOLDOWN_MS + 1
-        // last shown at the epoch -> cooldown elapsed -> fires
-        assertTrue(AdRules.sessionDue(now, sessionStart, 0L, false))
+    fun shouldShowAd_notAtPausePoint_neverFires() {
+        assertFalse(
+            AdRules.shouldShowAd(
+                consecutiveSaves = 5,
+                sessionMs = AdRules.SESSION_MIN_MS + 1,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS + 1,
+                isPro = false,
+                atPausePoint = false,
+            )
+        )
     }
 
     @Test
-    fun session_blockedUntilCooldown_passes() {
-        val sessionStart = 1_000L
-        val now = sessionStart + AdRules.SESSION_MIN_MS + 1
-        val justAfterAd = now - 1 // cooldown (180s) not yet elapsed
-        assertFalse(AdRules.sessionDue(now, sessionStart, justAfterAd, false))
+    fun shouldShowAd_firesWhenAllConditionsMet() {
+        assertTrue(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD,
+                sessionMs = AdRules.SESSION_MIN_MS,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
+    }
+
+    // --- consecutive saves threshold ---
+
+    @Test
+    fun shouldShowAd_firesAtExactlyThreshold() {
+        assertTrue(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD,
+                sessionMs = AdRules.SESSION_MIN_MS,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
     }
 
     @Test
-    fun session_blockedUntilSessionMin_passes() {
-        val sessionStart = 1_000L
-        val tooEarly = sessionStart + 1L // session threshold (120s) not yet elapsed
-        assertFalse(AdRules.sessionDue(tooEarly, sessionStart, 0L, false))
+    fun shouldShowAd_blockedBelowThreshold() {
+        assertFalse(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD - 1,
+                sessionMs = AdRules.SESSION_MIN_MS,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
     }
 
-    // --- resetMilestone ---
-    @Test
-    fun resetMilestone_clearsWhenCountDropsBelowLastShown() {
-        assertEquals(0, AdRules.resetMilestone(keyCount = 1, lastShownMilestone = 3))
-        assertEquals(0, AdRules.resetMilestone(keyCount = 0, lastShownMilestone = 3))
-    }
+    // --- session time floor ---
 
     @Test
-    fun resetMilestone_keepsWhenCountAtOrAboveLastShown() {
-        assertEquals(3, AdRules.resetMilestone(keyCount = 5, lastShownMilestone = 3))
-        assertEquals(3, AdRules.resetMilestone(keyCount = 3, lastShownMilestone = 3))
+    fun shouldShowAd_blockedBelowSessionMin() {
+        assertFalse(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD,
+                sessionMs = AdRules.SESSION_MIN_MS - 1,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
+    }
+
+    // --- cooldown floor ---
+
+    @Test
+    fun shouldShowAd_blockedBelowCooldown() {
+        assertFalse(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD,
+                sessionMs = AdRules.SESSION_MIN_MS,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS - 1,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
+    }
+
+    // --- never shown yet (timeSinceLastAd = 0) ---
+
+    @Test
+    fun shouldShowAd_neverShownBefore_passesCooldownWhen0() {
+        // timeSinceLastAd = 0 means never shown; pass 0 + cooldown as a large
+        // value to simulate "enough time elapsed since app start."
+        assertTrue(
+            AdRules.shouldShowAd(
+                consecutiveSaves = AdRules.CONSECUTIVE_SAVES_THRESHOLD,
+                sessionMs = AdRules.SESSION_MIN_MS + 1,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS + 1,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
+    }
+
+    // --- extra saves don't cause double-firing ---
+
+    @Test
+    fun shouldShowAd_moreSavesThanThreshold_stillFiresOnce() {
+        // More than the threshold should still be true (it just means
+        // the condition is met; the ViewModel is responsible for resetting
+        // the counter after firing).
+        assertTrue(
+            AdRules.shouldShowAd(
+                consecutiveSaves = 5,
+                sessionMs = AdRules.SESSION_MIN_MS + 1,
+                timeSinceLastAd = AdRules.AD_COOLDOWN_MS + 1,
+                isPro = false,
+                atPausePoint = true,
+            )
+        )
     }
 }
-

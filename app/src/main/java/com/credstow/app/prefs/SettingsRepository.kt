@@ -41,11 +41,12 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     val fontScale: Flow<Float> = store.data
         .map { it[Keys.FontScale] ?: AppConst.FONT_SCALE_DEFAULT }
 
-    /** Last key-count milestone a free interstitial was shown for (0 = none yet). */
-    val lastInterstitialMilestone: Flow<Int> = store.data
-        .map { it[Keys.LastInterstitialMilestone] ?: 0 }
+    /** Consecutive key saves since the last interstitial ad was shown.
+     *  Reset to 0 after an ad fires. Persisted so it survives process restarts. */
+    val consecutiveSavesSinceLastAd: Flow<Int> = store.data
+        .map { it[Keys.ConsecutiveSavesSinceLastAd] ?: 0 }
 
-    /** Epoch-ms of the last shown interstitial (for the session/cooldown rule). */
+    /** Epoch-ms of the last shown interstitial (for the cooldown rule). */
     val lastInterstitialShownAt: Flow<Long> = store.data
         .map { it[Keys.LastInterstitialShownAt] ?: 0L }
 
@@ -83,8 +84,8 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         store.edit { it[Keys.FontScale] = scale }
     }
 
-    suspend fun setLastInterstitialMilestone(value: Int) {
-        store.edit { it[Keys.LastInterstitialMilestone] = value }
+    suspend fun setConsecutiveSavesSinceLastAd(value: Int) {
+        store.edit { it[Keys.ConsecutiveSavesSinceLastAd] = value }
     }
 
     suspend fun setLastInterstitialShownAt(value: Long) {
@@ -115,8 +116,8 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         val ClipboardAutoClearSeconds = intPreferencesKey("clipboard_auto_clear_seconds")
         val BiometricLockEnabled = booleanPreferencesKey("biometric_lock_enabled")
         val AutoLockAfterMinutes = intPreferencesKey("auto_lock_after_minutes")
-        val LastInterstitialMilestone = intPreferencesKey("last_interstitial_milestone")
         val LastInterstitialShownAt = longPreferencesKey("last_interstitial_shown_at")
+        val ConsecutiveSavesSinceLastAd = intPreferencesKey("consecutive_saves_since_last_ad")
         val FontScale = floatPreferencesKey("font_scale")
         val PurchasedProductIds = stringSetPreferencesKey("purchased_product_ids")
         val KeySortBy = stringPreferencesKey("key_sort_by")

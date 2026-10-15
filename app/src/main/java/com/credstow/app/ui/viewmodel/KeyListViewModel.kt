@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
@@ -224,57 +223,76 @@ class KeyListViewModel(
     }
 
     // ---- Free-tier interstitial scheduling (Pro users NEVER see these) ----
-    // Two triggers, BOTH gated by isPro so Pro users never get interrupted:
-    //  - milestone: every KEYS_PER_AD keys present in the vault (3, 6, 9 …),
-    //    shown once per milestone.
-    //  - session:   after ~SESSION_MIN_MS of foreground time in this session,
-    //    with AD_COOLDOWN_MS enforced between any two interstitials.
+    // Policy: show an interstitial only when ALL of these are true:
+    //   1. User does NOT have Pro
+    //   2. User is at a "natural pause point" (list resume, settings visit,
+    //      task completed — e.g. key test, clipboard copy)
+    //   3. >= 2 consecutive key saves since the last ad
+    //   4. >= 2 minutes of session time
+    //   5. >= 3 minutes since the last ad (cooldown)
+    // The old 30s background ticker was removed — ads only fire at pause
+    // points so they can never interrupt a user mid-action.
     private var sessionStartMs = System.currentTimeMillis()
+    private var lastSeenKeyCount = 0
+    private var lastSeenKeyCountInitialized = false
     private val adLock = Mutex()
 
-    init {
-        // Periodic re-check so an idle free user still gets a time-based ad.
-        viewModelScope.launch {
-            while (true) {
-                delay(AdRules.TICK_MS)
-                maybeEmitAd()
-            }
-        }
-    }
-
-    /** Called by KeyListScreen on each RESUMED so a milestone ad can fire
-     * immediately after the user returns from saving a key. */
+    /** Called by KeyListScreen on RESUMED — a natural pause point
+     * (user returned from Add/Edit, Settings, or Key Detail). */
     fun onScreenResume() {
-        viewModelScope.launch { maybeEmitAd() }
+        viewModelScope.launch { checkAndShowAd(atPausePoint = true) }
     }
 
-    private suspend fun maybeEmitAd() {
+    /** Called from other natural pause points (e.g. after a key test
+     * completes, after clipboard copy, after visiting Settings). */
+    fun onPausePoint() {
+        viewModelScope.launch { checkAndShowAd(atPausePoint = true) }
+    }
+
+    private suspend fun checkAndShowAd(atPausePoint: Boolean) {
         adLock.withLock {
-            if (isProState.value) return@withLock
-            val now = System.currentTimeMillis()
-            val lastShown = settings.lastInterstitialShownAt.first()
-            // Cooldown between any two interstitials (persisted so it survives
-            // process restarts; this also de-dupes the 30s ticker + resume race).
-            if (now - lastShown < AdRules.AD_COOLDOWN_MS) return@withLock
-
-            val count = allKeys.value.size
-            var lastMilestone = settings.lastInterstitialMilestone.first()
-            // If keys were deleted below the milestone we last showed, reset the
-            // tracker so re-adding a multiple of KEYS_PER_AD can fire again.
-            val adjusted = AdRules.resetMilestone(count, lastMilestone)
-            if (adjusted != lastMilestone) {
-                lastMilestone = adjusted
-                settings.setLastInterstitialMilestone(lastMilestone)
+            if (atPausePoint) {
+                trackNewSaves()
             }
+            if (isProState.value) return@withLock
 
-            val milestone = AdRules.milestoneDue(count, lastMilestone, isPro = false)
-            val session = AdRules.sessionDue(now, sessionStartMs, lastShown, isPro = false)
-            if (milestone || session) {
+            val now = System.currentTimeMillis()
+            val consecutiveSaves = settings.consecutiveSavesSinceLastAd.first()
+            val lastShown = settings.lastInterstitialShownAt.first()
+            val timeSinceLastAd = if (lastShown > 0L) now - lastShown else now
+            val sessionMs = now - sessionStartMs
+
+            if (AdRules.shouldShowAd(
+                consecutiveSaves = consecutiveSaves,
+                sessionMs = sessionMs,
+                timeSinceLastAd = timeSinceLastAd,
+                isPro = isProState.value,
+                atPausePoint = atPausePoint,
+            )) {
                 settings.setLastInterstitialShownAt(now)
-                if (milestone) settings.setLastInterstitialMilestone(count)
+                settings.setConsecutiveSavesSinceLastAd(0)
                 _events.emit(Event.ShowInterstitial)
             }
         }
+    }
+
+    /** Compares current key count to last-seen count at a pause point.
+     *  Increments the consecutive-saves counter for each new key added.
+     *  Resets to 0 if keys were deleted (deletions aren't "saves"). */
+    private suspend fun trackNewSaves() {
+        val current = allKeys.value.size
+        if (!lastSeenKeyCountInitialized) {
+            lastSeenKeyCount = current
+            lastSeenKeyCountInitialized = true
+            return
+        }
+        if (current > lastSeenKeyCount) {
+            val saves = settings.consecutiveSavesSinceLastAd.first()
+            settings.setConsecutiveSavesSinceLastAd(saves + (current - lastSeenKeyCount))
+        } else if (current < lastSeenKeyCount) {
+            settings.setConsecutiveSavesSinceLastAd(0)
+        }
+        lastSeenKeyCount = current
     }
 }
 
