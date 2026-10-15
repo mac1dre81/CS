@@ -172,7 +172,11 @@
     <!-- Accessibility -->
     <string name="accessibility_provider_selector">Select provider</string>
     <string name="accessibility_copy_key">Copy key to clipboard</string>
-    <string name="accessibility_swipe_to_delete">Swipe to delete</string>
+    <string name="accessibility_swipe_to_delete">Swipe to delete key</string>
+    <string name="accessibility_long_press_copy">Long press to copy key</string>
+    <string name="accessibility_selected">Selected</string>
+    <string name="accessibility_enabled">Enabled</string>
+    <string name="accessibility_disabled">Disabled</string>
     <string name="accessibility_status_chip">Status: %1$s</string>
     <string name="accessibility_key_list_item">Key: %1$s, %2$s</string>
 

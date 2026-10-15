@@ -60,6 +60,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -87,6 +89,13 @@ fun SettingsScreen(
     val autoLock by vm.autoLockAfterMinutes.collectAsState(AppConst.AUTO_LOCK_DEFAULT_MINUTES)
     val fontScale by vm.fontScale.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Pre-resolve for semantics lambdas (stringResource requires composition context).
+    val biometricStateDesc = if (biometric) {
+        stringResource(R.string.accessibility_enabled)
+    } else {
+        stringResource(R.string.accessibility_disabled)
+    }
 
     var exportDialog by rememberSaveable { mutableStateOf(false) }
     var importDialog by rememberSaveable { mutableStateOf(false) }
@@ -252,6 +261,9 @@ fun SettingsScreen(
                     Switch(
                         checked = biometric,
                         onCheckedChange = { vm.onToggleBiometric() },
+                        modifier = Modifier.semantics {
+                            stateDescription = biometricStateDesc
+                        },
                     )
                 },
             )

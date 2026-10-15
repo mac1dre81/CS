@@ -196,7 +196,9 @@ fun KeyListScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            // Smart Pro trial/limit banner for free users approaching their key limit
+            // Smart Pro trial/limit banner for free users approaching their key limit.
+            // ui is collected as state above; vm.shouldShowProBanner reads uiState.value
+            // so it's correctly re-evaluated on every recomposition.
             if (vm.shouldShowProBanner) {
                 ProLimitBanner(
                     modifier = Modifier

@@ -33,6 +33,8 @@ import com.credstow.app.model.KeyStatus
 import com.credstow.app.model.Provider
 import com.credstow.app.domain.usecase.KeyFilter
 import com.credstow.app.ui.viewmodel.KeyListViewModel
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun FilterRow(
@@ -40,6 +42,9 @@ fun FilterRow(
     vm: KeyListViewModel,
     modifier: Modifier = Modifier,
 ) {
+    // Pre-resolve a11y strings for non-composable semantics lambdas.
+    val selectedStr = stringResource(R.string.accessibility_selected)
+
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             Modifier
@@ -51,7 +56,11 @@ fun FilterRow(
                 onClick = { vm.setProviderFilter(null) },
                 label = { Text(stringResource(R.string.list_filter_all)) },
                 colors = chipColors(selected = filter.provider == null),
-                modifier = Modifier.padding(end = 4.dp),
+                modifier = Modifier
+                    .padding(end = 4.dp)
+                    .semantics {
+                        stateDescription = if (filter.provider == null) selectedStr else ""
+                    },
             )
             Provider.entries.forEach { p ->
                 AssistChip(
@@ -60,7 +69,11 @@ fun FilterRow(
                     },
                     label = { Text(providerLabel(p)) },
                     colors = chipColors(selected = filter.provider == p),
-                    modifier = Modifier.padding(end = 4.dp),
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .semantics {
+                            stateDescription = if (filter.provider == p) selectedStr else ""
+                        },
                 )
             }
         }
@@ -78,7 +91,11 @@ fun FilterRow(
                     },
                     label = { Text(statusLabel(s)) },
                     colors = chipColors(selected = filter.status == s, tintForStatus(s)),
-                    modifier = Modifier.padding(end = 4.dp),
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .semantics {
+                            stateDescription = if (filter.status == s) selectedStr else ""
+                        },
                 )
             }
         }

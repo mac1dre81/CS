@@ -188,6 +188,8 @@ dependencies {
     testImplementation(libs.okhttp)
     testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.kotlinx.coroutines.core)
+    // LeakCanary for memory leak detection in debug builds
+    debugImplementation(libs.leakcanary)
 }
 
 kotlin {

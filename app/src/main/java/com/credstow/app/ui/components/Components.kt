@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,6 +54,8 @@ import com.credstow.app.R
 import com.credstow.app.model.KeyStatus
 import com.credstow.app.model.Provider
 import com.credstow.app.model.VaultKey
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun providerTint(provider: Provider): Color = when (provider) {
@@ -183,6 +184,10 @@ fun KeyListItem(
     onLongPressCopy: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Pre-resolve strings for non-composable semantics lambda.
+    val swipeHint = stringResource(R.string.accessibility_swipe_to_delete)
+    val copyHint = stringResource(R.string.accessibility_long_press_copy)
+
     ListItem(
         headlineContent = {
             Text(
@@ -235,8 +240,17 @@ fun KeyListItem(
             }
         },
         modifier = modifier
-            .combinedClickable(onClick = onItemClick, onLongClick = onLongPressCopy)
-            .clip(RoundedCornerShape(8.dp)),
+            .combinedClickable(
+                onClick = onItemClick,
+                onLongClick = onLongPressCopy,
+            )
+            .clip(RoundedCornerShape(8.dp))
+            .semantics {
+                // Announce available gestures to screen readers (2026 accessibility
+                // recommendation). SwipeToDismissBox handles the swipe gesture;
+                // combinedClickable handles tap + long-press.
+                stateDescription = "$swipeHint, $copyHint"
+            },
     )
 }
 

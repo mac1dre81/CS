@@ -25,3 +25,12 @@ HSPLandroidx/compose/material3/FilledCardTokens;->**(**)**
 HSPLandroidx/compose/material3/PaletteTokens;->**(**)**
 HSPLandroidx/compose/material3/ShapeTokens;->**(**)**
 HSPLandroidx/compose/material3/TypographyTokens;->**(**)**
+
+# App-specific hot paths
+# KeyRepositoryImpl: core data access (getById, getPlainKey, addKey)
+HSPLcom/credstow/app/data/KeyRepositoryImpl;**->**(**)**
+# Crypto: decryption/encryption paths on the hot path
+HSPLcom/credstow/app/crypto/AesGcmCrypto;**->**(**)**
+HSPLcom/credstow/app/crypto/Pbkdf2KeyDeriver;**->**(**)**
+# Compose: list item rendering (ComponentsKt holds KeyListItem, ProviderBadge, StatusChip)
+HSPLcom/credstow/app/ui/components/ComponentsKt**->**(**)**
