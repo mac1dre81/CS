@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -47,13 +48,16 @@ class SettingsViewModel(
     val keySortBy: StateFlow<SortBy> = settings.keySortBy
         .stateIn(viewModelScope, SharingStarted.Eagerly, SortBy.CreatedAt)
 
-    val sortLabel: String
-        get() = when (keySortBy.value) {
-            SortBy.CreatedAt -> "Newest first"
-            SortBy.Label -> "Name (A→Z)"
-            SortBy.LastUsedAt -> "Last used"
-            SortBy.ExpiryDate -> "Expires soon"
+    val sortLabel: StateFlow<String> = keySortBy
+        .map { sortBy ->
+            when (sortBy) {
+                SortBy.CreatedAt -> "Newest first"
+                SortBy.Label -> "Name (A→Z)"
+                SortBy.LastUsedAt -> "Last used"
+                SortBy.ExpiryDate -> "Expires soon"
+            }
         }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, "Newest first")
 
     val biometricLockEnabled: StateFlow<Boolean> = settings.biometricLockEnabled
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)

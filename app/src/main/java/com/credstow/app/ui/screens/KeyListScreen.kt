@@ -69,6 +69,7 @@ import com.credstow.app.domain.usecase.KeyFilter
 import com.credstow.app.ui.util.BiometricAuth
 import com.credstow.app.ui.util.vibrateError
 import com.credstow.app.ui.util.vibrateMedium
+import com.credstow.app.ui.util.vibrateTick
 import com.credstow.app.ui.viewmodel.KeyListViewModel
 import com.credstow.app.di.ServiceLocator
 import com.credstow.app.util.findActivity
@@ -275,6 +276,8 @@ private fun KeyListContent(
     navController: NavHostController,
     modifier: Modifier,
 ) {
+    val unlockedKeys by vm.unlockedKeys.collectAsState()
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 4.dp),
@@ -298,62 +301,81 @@ private fun KeyListContent(
             }
         }
         items(ui.keys, key = { it.id }) { key ->
-            // Haptic feedback: vibrate when the swipe-to-delete is committed.
             val ctx = LocalContext.current
-            val swipeState = rememberSwipeToDismissBoxState(
-                initialValue = SwipeToDismissBoxValue.Settled,
-                confirmValueChange = {
-                    if (it == SwipeToDismissBoxValue.Settled) return@rememberSwipeToDismissBoxState true
-                    ctx.vibrateError()
-                    vm.onSwipeDelete(key)
-                    true
-                },
-            )
-            SwipeToDismissBox(
-                state = swipeState,
-                backgroundContent = {
-                    val progress = swipeState.progress
-                    Box(
-                        Modifier
-                            .fillMaxSize()
-                            .background(
-                                if (progress > 0f) {
-                                    MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
-                                } else {
-                                    Color.Transparent
-                                }
-                            ),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        if (progress > 0.1f) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .padding(start = 16.dp)
-                                    .size(20.dp),
-                            )
+            val isUnlocked = unlockedKeys.contains(key.id)
+
+            // Lock-to-delete: by default keys are locked — swiping is disabled.
+            // The lock button (padlock icon) in KeyListItem toggles the state.
+            // When unlocked, swipe right to delete. Auto-relocks after 5s.
+            if (isUnlocked) {
+                val swipeState = rememberSwipeToDismissBoxState(
+                    initialValue = SwipeToDismissBoxValue.Settled,
+                    confirmValueChange = {
+                        if (it == SwipeToDismissBoxValue.Settled) return@rememberSwipeToDismissBoxState true
+                        ctx.vibrateError()
+                        vm.onSwipeDelete(key)
+                        true
+                    },
+                )
+                SwipeToDismissBox(
+                    state = swipeState,
+                    backgroundContent = {
+                        val progress = swipeState.progress
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .background(
+                                    if (progress > 0f) {
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+                                    } else {
+                                        Color.Transparent
+                                    }
+                                ),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            if (progress > 0.1f) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .padding(start = 16.dp)
+                                        .size(20.dp),
+                                )
+                            }
                         }
-                    }
-                },
-                enableDismissFromStartToEnd = true,
-                enableDismissFromEndToStart = false,
-                content = {
-                    KeyListItem(
-                        key = key,
-                        onItemClick = { navController.navigate(Routes.detail(key.id)) },
-                        onLongPressCopy = {
-                            ctx.vibrateMedium()
-                            vm.onCopy(key.id)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("key_list_item_${key.id}"),
-                    )
-                },
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-            )
+                    },
+                    enableDismissFromStartToEnd = true,
+                    enableDismissFromEndToStart = false,
+                    content = {
+                        KeyListItem(
+                            key = key,
+                            onItemClick = { navController.navigate(Routes.detail(key.id)) },
+                            onLongPressCopy = { ctx.vibrateMedium(); vm.onCopy(key.id) },
+                            onLockToggle = {
+                                ctx.vibrateTick()
+                                vm.toggleKeyLock(key.id) // Re-lock
+                            },
+                            locked = false,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                )
+            } else {
+                // Locked: no swipe-to-delete. Copy on long-press, lock button to unlock.
+                KeyListItem(
+                    key = key,
+                    onItemClick = { navController.navigate(Routes.detail(key.id)) },
+                    onLongPressCopy = { ctx.vibrateMedium(); vm.onCopy(key.id) },
+                    onLockToggle = {
+                        ctx.vibrateTick()
+                        vm.toggleKeyLock(key.id) // Unlock for delete
+                    },
+                    locked = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }

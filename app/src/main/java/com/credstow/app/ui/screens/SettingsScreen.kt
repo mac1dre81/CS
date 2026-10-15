@@ -89,6 +89,7 @@ fun SettingsScreen(
     val biometric by vm.biometricLockEnabled.collectAsState()
     val autoLock by vm.autoLockAfterMinutes.collectAsState(AppConst.AUTO_LOCK_DEFAULT_MINUTES)
     val fontScale by vm.fontScale.collectAsState()
+    val sortLabel by vm.sortLabel.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Pre-resolve for semantics lambdas (stringResource requires composition context).
@@ -318,7 +319,7 @@ fun SettingsScreen(
             )
             SettingsRow(
                 title = stringResource(R.string.settings_key_sort),
-                subtitle = vm.sortLabel,
+                subtitle = sortLabel,
                 icon = Icons.Default.DisplaySettings,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) sortDialog = true else showUpgrade = true },

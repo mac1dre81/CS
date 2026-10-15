@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 class KeyListViewModel(
     observeKeys: ObserveKeysUseCase,
@@ -83,6 +84,17 @@ class KeyListViewModel(
 
     /** IDs of keys that have been swiped away but not yet confirmed-deleted. */
     private val pendingDeleteIds = MutableStateFlow<Set<String>>(emptySet())
+
+    /**
+     * IDs of keys currently "unlocked" for swipe-to-delete.
+     *
+     * Lock-to-delete: by default, every key is locked — swiping has no effect.
+     * The user must long-press a key to unlock it, then swipe right to delete.
+     * Long-pressing an already-unlocked key re-locks it. Keys auto-relock
+     * after 5 seconds of inactivity so the list is never left in an unsafe state.
+     */
+    private val _unlockedKeys = MutableStateFlow<Set<String>>(emptySet())
+    val unlockedKeys: StateFlow<Set<String>> = _unlockedKeys
 
     val uiState: StateFlow<UiState> = combine(allKeys, _filter, isProEffective, pendingDeleteIds, keySortBy) { keys, f, pro, pending, sort ->
         val isTrialActive = pro && !isProState.value
@@ -142,6 +154,31 @@ class KeyListViewModel(
 
     fun clearFilters() {
         _filter.value = KeyFilter()
+    }
+
+    // ---- Lock-to-delete ----
+    // Keys are locked by default: swiping to delete is disabled until the
+    // user long-presses the key to unlock it. A second long-press re-locks.
+
+    /** True if this key's row currently allows swipe-to-delete. */
+    fun isKeyUnlocked(id: String): Boolean = _unlockedKeys.value.contains(id)
+
+    /** Toggle the locked/unlocked state of a key. */
+    fun toggleKeyLock(id: String) {
+        _unlockedKeys.update { current ->
+            if (current.contains(id)) current - id else current + id
+        }
+        // Auto-relock: schedule a re-lock after 5 seconds so the list is
+        // never left in an "all keys unlocked" state if the user walks away.
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(5_000L)
+            _unlockedKeys.update { it - id }
+        }
+    }
+
+    /** Lock all keys immediately — called when the user scrolls or navigates away. */
+    fun lockAllKeys() {
+        _unlockedKeys.value = emptySet()
     }
 
     fun canAddKeyNow(): Boolean = canAddKey(isProState.value, allKeys.value.size)
@@ -241,6 +278,7 @@ class KeyListViewModel(
     /** Called by KeyListScreen on RESUMED — a natural pause point
      * (user returned from Add/Edit, Settings, or Key Detail). */
     fun onScreenResume() {
+        lockAllKeys()  // Re-lock all keys after navigation
         viewModelScope.launch { checkAndShowAd(atPausePoint = true) }
     }
 

@@ -25,7 +25,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -33,6 +32,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -41,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -134,7 +136,11 @@ fun statusColor(status: KeyStatus): Color = when (status) {
 }
 
 @Composable
-fun StatusChip(status: KeyStatus, modifier: Modifier = Modifier) {
+fun StatusChip(
+    status: KeyStatus,
+    modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
+) {
     val (label, color) = when (status) {
         KeyStatus.VALID -> stringResource(R.string.status_active) to statusColor(status)
         KeyStatus.INVALID -> stringResource(R.string.status_invalid) to statusColor(status)
@@ -142,6 +148,7 @@ fun StatusChip(status: KeyStatus, modifier: Modifier = Modifier) {
         KeyStatus.TESTING -> stringResource(R.string.status_testing) to statusColor(status)
         KeyStatus.ERROR -> stringResource(R.string.status_error) to statusColor(status)
     }
+    val chipScale = if (size <= 20.dp) 0.75f else 1f
     AssistChip(
         onClick = {},
         enabled = false,
@@ -150,9 +157,9 @@ fun StatusChip(status: KeyStatus, modifier: Modifier = Modifier) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .size(10.dp)
-                            .padding(end = 4.dp),
-                        strokeWidth = 1.5.dp,
+                            .size(8.dp * chipScale)
+                            .padding(end = 2.dp * chipScale),
+                        strokeWidth = 1.dp,
                         color = color,
                     )
                     Text(
@@ -175,7 +182,9 @@ fun StatusChip(status: KeyStatus, modifier: Modifier = Modifier) {
             containerColor = color.copy(alpha = 0.12f),
             labelColor = color,
         ),
-        modifier = modifier,
+        modifier = modifier
+            .size(height = size, width = size)
+            .graphicsLayer(scaleX = chipScale, scaleY = chipScale),
     )
 }
 
@@ -184,77 +193,100 @@ fun KeyListItem(
     key: VaultKey,
     onItemClick: () -> Unit,
     onLongPressCopy: () -> Unit,
+    onLockToggle: () -> Unit,
+    locked: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    // Pre-resolve strings for non-composable semantics lambda.
-    val swipeHint = stringResource(R.string.accessibility_swipe_to_delete)
+    // Pre-resolve strings for non-composable semantics lambdas.
     val copyHint = stringResource(R.string.accessibility_long_press_copy)
+    val lockedDesc = stringResource(R.string.accessibility_locked)
+    val unlockedDesc = stringResource(R.string.accessibility_unlocked)
+    val lockState = if (locked) lockedDesc else unlockedDesc
 
-    ListItem(
-        headlineContent = {
-            Text(
-                text = key.label,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-            )
-        },
-        supportingContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                ProviderBadge(provider = key.provider, size = 20.dp)
-                Spacer(Modifier.width(6.dp))
-                Text(
-                    providerLabel(key.provider, key.providerId),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        },
-        trailingContent = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    shape = RoundedCornerShape(3.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                ) {
-                    Text(
-                        text = key.maskedKey,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Monospace,
-                        color = statusColor(key.status),
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                        maxLines = 1,
-                    )
-                }
-                Spacer(Modifier.width(6.dp))
-                StatusChip(status = key.status)
-                if (key.expiryDate != null) {
-                    val now = System.currentTimeMillis()
-                    val color = if (key.expiryDate <= now) MaterialTheme.colorScheme.error
-                    else if (key.expiryDate <= now + 7 * 24 * 60 * 60 * 1000L) Color(0xFFFF6B35)
-                    else MaterialTheme.colorScheme.tertiary
-                    Spacer(Modifier.width(4.dp))
-                    Box(
-                        Modifier
-                            .size(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(color),
-                    )
-                }
-            }
-        },
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .fillMaxWidth()
             .combinedClickable(
                 onClick = onItemClick,
                 onLongClick = onLongPressCopy,
             )
-            .clip(RoundedCornerShape(8.dp))
-            .testTag("key_list_item")
+            .clip(RoundedCornerShape(6.dp))
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+            .testTag("key_list_item_${key.id}")
             .semantics {
-                // Announce available gestures to screen readers (2026 accessibility
-                // recommendation). SwipeToDismissBox handles the swipe gesture;
-                // combinedClickable handles tap + long-press.
-                stateDescription = "$swipeHint, $copyHint"
+                // Announce lock state + copy gesture to screen readers.
+                stateDescription = "$lockState, $copyHint"
             },
-    )
+    ) {
+        // Leading: provider badge (compact)
+        ProviderBadge(provider = key.provider, size = 18.dp)
+        Spacer(Modifier.width(6.dp))
+
+        // Middle: label + provider name
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = key.label,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+            )
+            Text(
+                providerLabel(key.provider, key.providerId),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+            )
+        }
+
+        // Trailing: masked key + status + lock/unlock button
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(
+                shape = RoundedCornerShape(3.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+            ) {
+                Text(
+                    text = key.maskedKey,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = FontFamily.Monospace,
+                    color = statusColor(key.status),
+                    modifier = Modifier.padding(horizontal = 3.dp, vertical = 1.dp),
+                    maxLines = 1,
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            StatusChip(status = key.status, size = 14.dp)
+            if (key.expiryDate != null) {
+                val now = System.currentTimeMillis()
+                val color = if (key.expiryDate <= now) MaterialTheme.colorScheme.error
+                else if (key.expiryDate <= now + 7 * 24 * 60 * 60 * 1000L) Color(0xFFFF6B35)
+                else MaterialTheme.colorScheme.tertiary
+                Spacer(Modifier.width(3.dp))
+                Box(
+                    Modifier
+                        .size(6.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(color),
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            // Lock/unlock button: toggles the key's swipe-to-delete state.
+            // When locked (default), swiping is disabled — prevents accidental deletes.
+            // When unlocked, swipe right to delete; tap the lock again to re-lock.
+            IconButton(
+                onClick = onLockToggle,
+                modifier = Modifier.size(24.dp),
+            ) {
+                Icon(
+                    imageVector = if (locked) Icons.Default.Lock else Icons.Default.LockOpen,
+                    contentDescription = if (locked) lockedDesc else unlockedDesc,
+                    tint = if (locked) MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+                    else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(14.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable
