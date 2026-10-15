@@ -227,7 +227,8 @@ class KeyListViewModel(
     //   1. User does NOT have Pro
     //   2. User is at a "natural pause point" (list resume, settings visit,
     //      task completed — e.g. key test, clipboard copy)
-    //   3. >= 2 consecutive key saves since the last ad
+    //   3. >= 3 consecutive key saves since the last ad
+    //      (Play policy: 2 actions minimum between ads; we use 3 for safety)
     //   4. >= 1 minute of session time
     //   5. >= 2 minutes since the last ad (cooldown)
     // The old 30s background ticker was removed — ads only fire at pause
