@@ -228,8 +228,8 @@ class KeyListViewModel(
     //   2. User is at a "natural pause point" (list resume, settings visit,
     //      task completed — e.g. key test, clipboard copy)
     //   3. >= 2 consecutive key saves since the last ad
-    //   4. >= 2 minutes of session time
-    //   5. >= 3 minutes since the last ad (cooldown)
+    //   4. >= 1 minute of session time
+    //   5. >= 2 minutes since the last ad (cooldown)
     // The old 30s background ticker was removed — ads only fire at pause
     // points so they can never interrupt a user mid-action.
     private var sessionStartMs = System.currentTimeMillis()
