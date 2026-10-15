@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -62,6 +63,9 @@ import com.credstow.app.ui.components.StatusChip
 import com.credstow.app.ui.components.providerLabel
 import com.credstow.app.ui.navigation.Routes
 import com.credstow.app.ui.util.BiometricAuth
+import com.credstow.app.ui.util.vibrateMedium
+import com.credstow.app.ui.util.vibrateTick
+import com.credstow.app.ui.util.vibrateError
 import com.credstow.app.ui.viewmodel.KeyDetailViewModel
 import com.credstow.app.util.formatDate
 import com.credstow.app.util.formatDateTime
@@ -96,7 +100,10 @@ fun KeyDetailScreen(
                     title = context.getString(R.string.biometric_prompt_title),
                     subtitle = context.getString(R.string.biometric_prompt_subtitle),
                 ) ?: false
-                if (result) vm.onBiometricAuthSuccess()
+                if (result) {
+                    context.vibrateTick()
+                    vm.onBiometricAuthSuccess()
+                }
             }
         }
     }
@@ -114,15 +121,24 @@ fun KeyDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { vm.onCopy() }) {
+                    IconButton(
+                        onClick = { context.vibrateMedium(); vm.onCopy() },
+                        modifier = Modifier.testTag("detail_copy"),
+                    ) {
                         Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.detail_copy))
                     }
                     key?.let {
-                        IconButton(onClick = { navController.navigate(Routes.edit(it.id)) }) {
+                        IconButton(
+                            onClick = { navController.navigate(Routes.edit(it.id)) },
+                            modifier = Modifier.testTag("detail_edit"),
+                        ) {
                             Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.detail_edit))
                         }
                     }
-                    IconButton(onClick = { showDelete = true }) {
+                    IconButton(
+                        onClick = { context.vibrateError(); showDelete = true },
+                        modifier = Modifier.testTag("detail_delete"),
+                    ) {
                         Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.detail_delete))
                     }
                 },
@@ -132,6 +148,7 @@ fun KeyDetailScreen(
             if (showTestFab) {
                 FloatingActionButton(
                     onClick = { if (!isTesting) vm.onTest() },
+                    modifier = Modifier.testTag("detail_test_fab"),
                 ) {
                     if (isTesting) {
                         CircularProgressIndicator(

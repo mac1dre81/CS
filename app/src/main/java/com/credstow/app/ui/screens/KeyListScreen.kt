@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -66,10 +67,11 @@ import com.credstow.app.ui.components.KeyListItem
 import com.credstow.app.ui.navigation.Routes
 import com.credstow.app.domain.usecase.KeyFilter
 import com.credstow.app.ui.util.BiometricAuth
+import com.credstow.app.ui.util.vibrateError
+import com.credstow.app.ui.util.vibrateMedium
 import com.credstow.app.ui.viewmodel.KeyListViewModel
 import com.credstow.app.di.ServiceLocator
 import com.credstow.app.util.findActivity
-import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -166,7 +168,10 @@ fun KeyListScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
-                    IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
+                    IconButton(
+                        onClick = { navController.navigate(Routes.SETTINGS) },
+                        modifier = Modifier.testTag("topbar_settings"),
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(R.string.settings_title),
@@ -176,17 +181,18 @@ fun KeyListScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    if (vm.canAddKeyNow()) navController.navigate(Routes.ADD)
-                    else vm.onAddClicked()
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.list_add_key),
-                )
-            }
+                    FloatingActionButton(
+                        onClick = {
+                            if (vm.canAddKeyNow()) navController.navigate(Routes.ADD)
+                            else vm.onAddClicked()
+                        },
+                        modifier = Modifier.testTag("fab_add_key"),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.list_add_key),
+                        )
+                    }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         modifier = modifier,
@@ -292,10 +298,13 @@ private fun KeyListContent(
             }
         }
         items(ui.keys, key = { it.id }) { key ->
+            // Haptic feedback: vibrate when the swipe-to-delete is committed.
+            val ctx = LocalContext.current
             val swipeState = rememberSwipeToDismissBoxState(
                 initialValue = SwipeToDismissBoxValue.Settled,
                 confirmValueChange = {
                     if (it == SwipeToDismissBoxValue.Settled) return@rememberSwipeToDismissBoxState true
+                    ctx.vibrateError()
                     vm.onSwipeDelete(key)
                     true
                 },
@@ -334,8 +343,13 @@ private fun KeyListContent(
                     KeyListItem(
                         key = key,
                         onItemClick = { navController.navigate(Routes.detail(key.id)) },
-                        onLongPressCopy = { vm.onCopy(key.id) },
-                        modifier = Modifier.fillMaxWidth(),
+                        onLongPressCopy = {
+                            ctx.vibrateMedium()
+                            vm.onCopy(key.id)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("key_list_item_${key.id}"),
                     )
                 },
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),

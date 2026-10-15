@@ -1,5 +1,10 @@
 package com.credstow.app.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,9 +32,17 @@ import com.credstow.app.ui.viewmodel.SettingsViewModel
 import com.credstow.app.ui.viewmodel.SplashViewModel
 import com.credstow.app.ui.viewmodel.factoryFor
 
+private const val NAV_ANIM_MS = 250
+
 /**
  * Single NavHost. Navigation is single-top from the splash destination so the
  * back stack never holds the launch screen after the first real destination.
+ *
+ * Predictive back gesture: the composable destinations below are equipped
+ * with enter/exit transitions. On Android 13+ (API 33), the system's
+ * predictive back gesture drives these transitions automatically — the
+ * incoming screen slides in from the right while the outgoing screen
+ * slides out, giving the user a native, polished back-swipe.
  */
 @Composable
 fun CredStowNavHost(
@@ -55,7 +68,13 @@ fun CredStowNavHost(
             }
         }
 
-        composable(Routes.ONBOARDING) { entry ->
+        composable(
+            Routes.ONBOARDING,
+            enterTransition = { fadeIn(tween(NAV_ANIM_MS)) },
+            exitTransition = { fadeOut(tween(NAV_ANIM_MS)) },
+            popEnterTransition = { fadeIn(tween(NAV_ANIM_MS)) },
+            popExitTransition = { fadeOut(tween(NAV_ANIM_MS)) },
+        ) { entry ->
             val vm = entry.vm<OnboardingViewModel>(sl)
             OnboardingScreen(vm) {
                 navController.navigate(Routes.LIST) {
@@ -64,12 +83,24 @@ fun CredStowNavHost(
             }
         }
 
-        composable(Routes.LIST) { entry ->
+        composable(
+            Routes.LIST,
+            enterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { -it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { -it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+        ) { entry ->
             val vm = entry.vm<KeyListViewModel>(sl)
             KeyListScreen(vm = vm, navController = navController)
         }
 
-        composable(Routes.ADD) { entry ->
+        composable(
+            Routes.ADD,
+            enterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+        ) { entry ->
             val vm = entry.vm<AddEditKeyViewModel>(sl)
             AddEditKeyScreen(
                 vm = vm,
@@ -78,7 +109,13 @@ fun CredStowNavHost(
             )
         }
 
-        composable(Routes.EDIT_PATTERN) { entry ->
+        composable(
+            Routes.EDIT_PATTERN,
+            enterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+        ) { entry ->
             val vm = entry.vm<AddEditKeyViewModel>(sl)
             AddEditKeyScreen(
                 vm = vm,
@@ -87,12 +124,24 @@ fun CredStowNavHost(
             )
         }
 
-        composable(Routes.DETAIL_PATTERN) { entry ->
+        composable(
+            Routes.DETAIL_PATTERN,
+            enterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { -it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { -it } },
+        ) { entry ->
             val vm = entry.vm<KeyDetailViewModel>(sl)
             KeyDetailScreen(vm = vm, navController = navController)
         }
 
-        composable(Routes.SETTINGS) { entry ->
+        composable(
+            Routes.SETTINGS,
+            enterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_ANIM_MS)) { it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_ANIM_MS)) { it } },
+        ) { entry ->
             val vm = entry.vm<SettingsViewModel>(sl)
             SettingsScreen(vm = vm, navController = navController)
         }

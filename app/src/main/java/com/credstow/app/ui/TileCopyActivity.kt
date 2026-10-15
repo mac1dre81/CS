@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.credstow.app.ui.util.vibrateMedium
+import com.credstow.app.ui.util.vibrateError
 import androidx.fragment.app.FragmentActivity
 import com.credstow.app.AuthTracker
 import com.credstow.app.R
@@ -121,6 +123,7 @@ class TileCopyActivity : ComponentActivity() {
                             coroutineScope.launch {
                                 val plain = sl.keyRepository.getPlainKey(key.id)
                                 if (plain == null) {
+                                    context.vibrateError()
                                     Toast.makeText(
                                         context,
                                         "Could not decrypt key",
@@ -130,6 +133,7 @@ class TileCopyActivity : ComponentActivity() {
                                 }
                                 val autoClear = sl.settingsRepository.clipboardAutoClearSeconds.first()
                                 sl.clipboardHelper.copy(plain, autoClear, this)
+                                context.vibrateMedium()
                                 Toast.makeText(
                                     context,
                                     "Copied ${key.label} to clipboard",

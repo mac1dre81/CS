@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -106,7 +107,8 @@ fun ProviderBadge(
             .size(size)
             .clip(RoundedCornerShape(if (size <= 28.dp) 8.dp else 12.dp))
             .background(providerTint(provider))
-            .padding(size / 5),
+            .padding(size / 5)
+            .testTag("provider_badge_${provider.name.lowercase()}"),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -245,6 +247,7 @@ fun KeyListItem(
                 onLongClick = onLongPressCopy,
             )
             .clip(RoundedCornerShape(8.dp))
+            .testTag("key_list_item")
             .semantics {
                 // Announce available gestures to screen readers (2026 accessibility
                 // recommendation). SwipeToDismissBox handles the swipe gesture;

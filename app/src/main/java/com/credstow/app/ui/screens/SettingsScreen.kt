@@ -59,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
@@ -257,6 +258,7 @@ fun SettingsScreen(
             SettingsRow(
                 title = stringResource(R.string.settings_biometric),
                 subtitle = stringResource(R.string.settings_biometric_hint),
+                testTag = "settings_biometric_lock",
                 trailing = {
                     Switch(
                         checked = biometric,
@@ -320,6 +322,7 @@ fun SettingsScreen(
                 icon = Icons.Default.DisplaySettings,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) sortDialog = true else showUpgrade = true },
+                testTag = "settings_key_sort",
             )
             SettingsRow(
                 title = stringResource(R.string.display_system),
@@ -328,6 +331,7 @@ fun SettingsScreen(
                 onClick = {
                     activity.startActivity(Intent(Settings.ACTION_DISPLAY_SETTINGS))
                 },
+                testTag = "settings_display_system",
             )
 
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
@@ -338,12 +342,14 @@ fun SettingsScreen(
                 icon = Icons.Default.CloudUpload,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) exportDialog = true else showUpgrade = true },
+                testTag = "settings_export",
             )
             SettingsRow(
                 title = stringResource(R.string.settings_import),
                 icon = Icons.Default.CloudDownload,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) importDialog = true else showUpgrade = true },
+                testTag = "settings_import",
             )
             SettingsRow(
                 title = stringResource(R.string.settings_privacy),
@@ -351,6 +357,7 @@ fun SettingsScreen(
                 onClick = {
                     activity.startActivity(Intent(activity, com.credstow.app.ui.PrivacyPolicyActivity::class.java))
                 },
+                testTag = "settings_privacy",
             )
             SettingsRow(
                 title = stringResource(R.string.settings_redeem_title),
@@ -358,6 +365,7 @@ fun SettingsScreen(
                 icon = Icons.Default.Star,
                 enabled = true,
                 onClick = { vm.redeemPromoCode(activity) },
+                testTag = "settings_redeem",
             )
             SettingsRow(
                 title = stringResource(R.string.settings_restore_purchases),
@@ -365,6 +373,7 @@ fun SettingsScreen(
                 icon = Icons.Default.CloudDownload,
                 enabled = true,
                 onClick = { vm.refreshPro() },
+                testTag = "settings_restore",
             )
 
             Spacer(Modifier.height(80.dp))
@@ -496,6 +505,7 @@ private fun SettingsRow(
     enabled: Boolean = true,
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
+    testTag: String? = null,
 ) {
     val clickable = if (onClick != null && enabled) Modifier.clickable(onClick = onClick) else Modifier
     Row(
@@ -503,7 +513,8 @@ private fun SettingsRow(
         modifier = modifier
             .fillMaxWidth()
             .then(clickable)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .let { if (testTag != null) it.testTag(testTag) else it },
     ) {
         if (icon != null) {
             Icon(icon, contentDescription = null, tint = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f), modifier = Modifier.size(20.dp))

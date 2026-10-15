@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,7 @@ fun FilterRow(
                 colors = chipColors(selected = filter.provider == null),
                 modifier = Modifier
                     .padding(end = 4.dp)
+                    .testTag("chip_provider_all")
                     .semantics {
                         stateDescription = if (filter.provider == null) selectedStr else ""
                     },
@@ -71,6 +73,7 @@ fun FilterRow(
                     colors = chipColors(selected = filter.provider == p),
                     modifier = Modifier
                         .padding(end = 4.dp)
+                        .testTag("chip_provider_${p.name.lowercase()}")
                         .semantics {
                             stateDescription = if (filter.provider == p) selectedStr else ""
                         },
@@ -93,6 +96,7 @@ fun FilterRow(
                     colors = chipColors(selected = filter.status == s, tintForStatus(s)),
                     modifier = Modifier
                         .padding(end = 4.dp)
+                        .testTag("chip_status_${s.name.lowercase()}")
                         .semantics {
                             stateDescription = if (filter.status == s) selectedStr else ""
                         },

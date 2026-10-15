@@ -1,7 +1,10 @@
 package com.credstow.app
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +20,7 @@ import com.credstow.app.di.ServiceLocator
 import com.credstow.app.ui.navigation.CredStowNavHost
 import com.credstow.app.ui.screens.LockScreen
 import com.credstow.app.ui.theme.CredStowTheme
+import com.credstow.app.ui.viewmodel.SplashViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -39,10 +43,27 @@ class MainActivity : AppCompatActivity() {
     private var isFirstOnStart = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Native splash screen (Android 12+ API, backported via androidx.core).
+        // installSplashScreen() must be called before super.onCreate() and
+        // returns a SplashScreen object that we can use to control visibility.
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         sl = ServiceLocator.getInstance(this)
         billing = sl.billingManager
         AuthTracker.init(this)
+
+        // Early-create the SplashViewModel so we can observe destination
+        // resolution and tell the native splash when it's safe to hide.
+        val splashVm = SplashViewModel(sl.settingsRepository)
+        splashScreen.setKeepOnScreenCondition {
+            splashVm.destination.value == null
+        }
+
+        // Prevent screenshots of key material — this is a security-first app.
+        // FLAG_SECURE applies to the entire app, ensuring masks/keys are never
+        // captured via screenshot, screen recording, or in the recents preview.
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
         setContent {
             val fontScale by sl.settingsRepository.fontScale
