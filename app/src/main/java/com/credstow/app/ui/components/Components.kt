@@ -324,7 +324,7 @@ fun ApiKeyField(
 @Composable
 fun AppKeyIcon(modifier: Modifier = Modifier, tint: Color = MaterialTheme.colorScheme.primary) {
     Icon(
-        painter = painterResource(R.drawable.ic_launcher_foreground),
+        painter = painterResource(R.drawable.ic_app_mark),
         contentDescription = null,
         tint = tint,
         modifier = modifier,

@@ -2,6 +2,7 @@
 
 package com.credstow.app.ui.screens
 
+import android.os.SystemClock
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,11 +51,14 @@ fun SplashScreen(
     val biometricEnabled by vm.biometricLockEnabled.collectAsState()
     val autoLockMinutes by vm.autoLockAfterMinutes.collectAsState(AppConst.AUTO_LOCK_DEFAULT_MINUTES)
     val context = LocalContext.current
+    val splashShownAt = remember { SystemClock.elapsedRealtime() }
 
     LaunchedEffect(destination) {
         destination?.let { d ->
             Log.d(TAG, "SplashGate: dest=$d biometricEnabled=$biometricEnabled")
-            delay(700)
+            val remainingMs = (AppConst.SPLASH_MIN_DURATION_MS -
+                (SystemClock.elapsedRealtime() - splashShownAt)).coerceAtLeast(0L)
+            delay(remainingMs)
             var authResult = false
             // Only prompt if biometric lock is on AND either this is the very first
             // cold start (lastAuthenticatedAt == 0) or the auto-lock timer has expired

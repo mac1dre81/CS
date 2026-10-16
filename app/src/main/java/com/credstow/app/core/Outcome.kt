@@ -15,6 +15,9 @@ object AppConst {
     const val CLIPBOARD_AUTO_CLEAR_MIN_SECONDS = 5
     const val CLIPBOARD_AUTO_CLEAR_MAX_SECONDS = 120
 
+    /** Minimum time the branded Compose splash stays visible after first paint. */
+    const val SPLASH_MIN_DURATION_MS = 2_000L
+
     /** Auto-lock: if biometric lock is enabled, require re-auth after this many minutes of inactivity. */
     const val AUTO_LOCK_DEFAULT_MINUTES = 5
     const val AUTO_LOCK_MIN_MINUTES = 1
