@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,6 +57,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.mutableStateOf
 import com.credstow.app.ui.components.AdBanner
 import com.credstow.app.ui.components.EmptyState
@@ -77,6 +79,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 private fun hasActiveFilter(f: KeyFilter) =
     f.provider != null || f.status != null || f.query.isNotBlank()
@@ -103,8 +106,8 @@ fun KeyListScreen(
     val biometricTitle = stringResource(R.string.biometric_prompt_title)
     val biometricSubtitle = stringResource(R.string.biometric_prompt_subtitle)
 
-    // Pre-load a free interstitial while the home screen is visible so it's
-    // ready when a milestone / session trigger fires. Pro users never get here.
+    // Interstitial is pre-loaded in SplashViewModel (earlier = better fill rate).
+    // Re-load if Pro status changes (user just upgraded mid-session).
     LaunchedEffect(ui.isPro) {
         if (!ui.isPro) {
             ServiceLocator.getInstance(ctx).interstitialAdManager.load()
@@ -277,9 +280,19 @@ private fun KeyListContent(
     modifier: Modifier,
 ) {
     val unlockedKeys by vm.unlockedKeys.collectAsState()
+    val listState = rememberLazyListState()
+
+    // Auto-relock: when the user starts scrolling, immediately re-lock all
+    // keys so swipe-to-delete can never fire during a scroll gesture.
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect { scrolling -> if (scrolling) vm.lockAllKeys() }
+    }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        state = listState,
         contentPadding = PaddingValues(vertical = 4.dp),
     ) {
         stickyHeader {
@@ -306,7 +319,7 @@ private fun KeyListContent(
 
             // Lock-to-delete: by default keys are locked — swiping is disabled.
             // The lock button (padlock icon) in KeyListItem toggles the state.
-            // When unlocked, swipe right to delete. Auto-relocks after 5s.
+            // When unlocked, swipe right to delete. Auto-relocks after 10s.
             if (isUnlocked) {
                 val swipeState = rememberSwipeToDismissBoxState(
                     initialValue = SwipeToDismissBoxValue.Settled,

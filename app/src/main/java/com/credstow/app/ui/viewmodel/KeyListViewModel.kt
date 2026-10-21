@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -91,7 +92,7 @@ class KeyListViewModel(
      * Lock-to-delete: by default, every key is locked — swiping has no effect.
      * The user must long-press a key to unlock it, then swipe right to delete.
      * Long-pressing an already-unlocked key re-locks it. Keys auto-relock
-     * after 5 seconds of inactivity so the list is never left in an unsafe state.
+     * after 10 seconds of inactivity so the list is never left in an unsafe state.
      */
     private val _unlockedKeys = MutableStateFlow<Set<String>>(emptySet())
     val unlockedKeys: StateFlow<Set<String>> = _unlockedKeys
@@ -109,7 +110,8 @@ class KeyListViewModel(
             proTrialEndsAt = proTrialEndsAt.value,
             keyCount = keys.size,
         )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState(isLoading = true))
+    }.distinctUntilChanged()
+    .stateIn(viewModelScope, SharingStarted.Eagerly, UiState(isLoading = true))
 
     private fun sortKeys(keys: List<VaultKey>, sort: SortBy): List<VaultKey> = when (sort) {
         SortBy.CreatedAt -> keys.sortedByDescending { it.createdAt }
@@ -168,10 +170,10 @@ class KeyListViewModel(
         _unlockedKeys.update { current ->
             if (current.contains(id)) current - id else current + id
         }
-        // Auto-relock: schedule a re-lock after 5 seconds so the list is
+        // Auto-relock: schedule a re-lock after 10 seconds so the list is
         // never left in an "all keys unlocked" state if the user walks away.
         viewModelScope.launch {
-            kotlinx.coroutines.delay(5_000L)
+            kotlinx.coroutines.delay(10_000L)
             _unlockedKeys.update { it - id }
         }
     }

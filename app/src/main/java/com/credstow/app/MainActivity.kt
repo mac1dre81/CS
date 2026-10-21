@@ -55,7 +55,11 @@ class MainActivity : AppCompatActivity() {
 
         // Early-create the SplashViewModel so we can observe destination
         // resolution and tell the native splash when it's safe to hide.
-        val splashVm = SplashViewModel(sl.settingsRepository)
+        val splashVm = SplashViewModel(
+            sl.settingsRepository,
+            sl.proState,
+            sl.interstitialAdManager,
+        )
         splashScreen.setKeepOnScreenCondition {
             splashVm.destination.value == null
         }

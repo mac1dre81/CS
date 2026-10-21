@@ -21,7 +21,11 @@ class CredStowViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T = when (modelClass) {
         SplashViewModel::class.java ->
-            SplashViewModel(sl.settingsRepository)
+            SplashViewModel(
+                sl.settingsRepository,
+                sl.proState,
+                sl.interstitialAdManager,
+            )
 
         OnboardingViewModel::class.java ->
             OnboardingViewModel(sl.settingsRepository)
