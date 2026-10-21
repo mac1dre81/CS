@@ -109,6 +109,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        // Security: instantly clear any key left on the clipboard when the app
+        // moves to the background. The timer-based auto-clear still applies for
+        // users who stay in the app, but this prevents secret leakage when they
+        // switch to another app (e.g. to paste a key into a browser).
+        ServiceLocator.getInstance(this).clipboardHelper.clearNow()
         billing.end()
     }
 }

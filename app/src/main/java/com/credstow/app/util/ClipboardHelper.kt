@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class ClipboardHelper(context: Context) {
 
     private val cm = context.applicationContext
-        .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        .getSystemService(android.content.ClipboardManager::class.java)!!
 
     private var lastCopied: String? = null
     private var clearJob: Job? = null
@@ -46,10 +46,18 @@ class ClipboardHelper(context: Context) {
         }
     }
 
-    fun clearScheduled() {
+    /**
+     * Immediately clears the clipboard if it still holds our last copied key.
+     * Called from Activity.onStop() so secrets are never left on the clipboard
+     * when the user switches away from the app.
+     */
+    fun clearNow() {
         clearJob?.cancel()
         clearJob = null
         clearScope = null
+        if (lastCopied != null && matchesCurrentClip()) {
+            cm.setPrimaryClip(ClipData.newPlainText("", ""))
+        }
         lastCopied = null
     }
 
