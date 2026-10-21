@@ -21,10 +21,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -140,17 +147,32 @@ private fun statusLabel(s: KeyStatus): String = when (s) {
 
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
+    // Gentle pulse: scale oscillates 0.8 -> 1.0 -> 0.8 over 2s, drawing
+    // the eye to the empty state without being distracting.
+    val infiniteTransition = rememberInfiniteTransition(label = "empty_pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+        ),
+        label = "pulse_scale",
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(24.dp)
+            .testTag("empty_state"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .graphicsLayer(scaleX = pulseScale, scaleY = pulseScale),
         )
         Spacer(Modifier.height(12.dp))
         Text(
@@ -191,17 +213,31 @@ fun NoResultsState(
     modifier: Modifier = Modifier,
     onClear: () -> Unit,
 ) {
+    // Subtle bob: icon floats up/down 8dp over 2.5s, signalling "nothing here".
+    val infiniteTransition = rememberInfiniteTransition(label = "no_results_bob")
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2500, easing = LinearEasing),
+        ),
+        label = "offset_y",
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(24.dp)
+            .testTag("no_results_state"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .graphicsLayer { translationY = offsetY },
         )
         Spacer(Modifier.height(12.dp))
         Text(

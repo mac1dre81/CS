@@ -26,11 +26,12 @@ import android.os.VibratorManager
 private fun Context.resolveVibrator(): Vibrator? {
     return try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val manager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            val manager = getSystemService(VibratorManager::class.java)
             manager?.defaultVibrator
         } else {
-            @Suppress("DEPRECATION")
-            getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            // getSystemService(Class<T>) is available since API 23 (we target 24+),
+            // avoiding the deprecated VIBRATOR_SERVICE string constant.
+            getSystemService(Vibrator::class.java)
         }
     } catch (_: Throwable) {
         null
