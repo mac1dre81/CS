@@ -59,9 +59,11 @@ android {
         release {
             // Keys are encrypted at rest; shrinking/obfuscation does not expose them.
             // R8 minify + resource shrinking reduces APK size and hardens the binary
-            // by removing unused code and renaming internal symbols. The proguard
-            // rules in proguard-rules.pro keep all reflection-dependent library
-            // code (Room, OkHttp, AdMob, Play Billing, Compose) intact.
+            // by removing unused code and renaming internal symbols. R8 full mode is
+            // enabled globally via gradle.properties (android.enableR8.fullMode=true),
+            // which applies to release builds. The proguard rules in
+            // proguard-rules.pro keep all reflection-dependent library code
+            // (Room, OkHttp, AdMob, Play Billing, Compose) intact.
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true

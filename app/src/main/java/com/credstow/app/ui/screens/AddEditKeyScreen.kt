@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -95,6 +96,7 @@ fun AddEditKeyScreen(
                     TextButton(
                         onClick = { vm.save() },
                         enabled = !ui.isSaving,
+                        modifier = Modifier.testTag("save_key_button"),
                     ) {
                         Text(stringResource(R.string.action_save))
                     }
@@ -126,7 +128,8 @@ fun AddEditKeyScreen(
                         .fillMaxWidth()
                         .clickable(enabled = !ui.isLoading) { providerDialog = true }
                         .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        .testTag("add_edit_provider_selector"),
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -152,7 +155,9 @@ fun AddEditKeyScreen(
                     label = { Text(stringResource(R.string.field_provider_custom)) },
                     placeholder = { Text(stringResource(R.string.field_provider_custom_hint)) },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("add_edit_custom_provider_field"),
                     shape = RoundedCornerShape(12.dp),
                     enabled = !ui.isLoading,
                 )
@@ -167,7 +172,9 @@ fun AddEditKeyScreen(
                 label = { Text(stringResource(R.string.field_label)) },
                 placeholder = { Text(stringResource(R.string.field_label_hint)) },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("add_edit_label_field"),
                 shape = RoundedCornerShape(12.dp),
                 enabled = !ui.isLoading,
             )

@@ -304,7 +304,7 @@ fun ApiKeyField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier,
+        modifier = modifier.testTag("api_key_field"),
         label = { if (label.isNotEmpty()) Text(label) },
         placeholder = { if (hint.isNotEmpty()) Text(hint) },
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
