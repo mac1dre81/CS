@@ -29,6 +29,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
@@ -98,7 +99,11 @@ fun AddEditKeyScreen(
                         enabled = !ui.isSaving,
                         modifier = Modifier.testTag("save_key_button"),
                     ) {
-                        Text(stringResource(R.string.action_save))
+                        Text(
+                            stringResource(R.string.action_save),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge,
+                        )
                     }
                 },
             )
@@ -127,7 +132,10 @@ fun AddEditKeyScreen(
                     Modifier
                         .fillMaxWidth()
                         .clickable(enabled = !ui.isLoading) { providerDialog = true }
-                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
+                        .background(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                            RoundedCornerShape(12.dp)
+                        )
                         .padding(12.dp)
                         .testTag("add_edit_provider_selector"),
                 ) {

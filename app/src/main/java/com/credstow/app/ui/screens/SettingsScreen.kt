@@ -340,6 +340,7 @@ fun SettingsScreen(
             // --- Backup (Pro) ---
             SettingsRow(
                 title = stringResource(R.string.settings_export),
+                subtitle = stringResource(R.string.settings_export_summary),
                 icon = Icons.Default.CloudUpload,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) exportDialog = true else showUpgrade = true },
@@ -347,6 +348,7 @@ fun SettingsScreen(
             )
             SettingsRow(
                 title = stringResource(R.string.settings_import),
+                subtitle = stringResource(R.string.settings_import_summary),
                 icon = Icons.Default.CloudDownload,
                 enabled = isEffectivePro,
                 onClick = { if (isEffectivePro) importDialog = true else showUpgrade = true },
@@ -433,6 +435,12 @@ fun SettingsScreen(
             title = { Text(stringResource(R.string.settings_export)) },
             text = {
                 Column {
+                    Text(
+                        text = stringResource(R.string.backup_encryption_notice),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
                     OutlinedTextField(
                         value = pw,
                         onValueChange = { pw = it },
@@ -464,6 +472,12 @@ fun SettingsScreen(
             title = { Text(stringResource(R.string.settings_import)) },
             text = {
                 Column {
+                    Text(
+                        text = stringResource(R.string.backup_encryption_notice),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
                     OutlinedTextField(
                         value = importBlob,
                         onValueChange = { importBlob = it },
