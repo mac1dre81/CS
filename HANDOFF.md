@@ -1,6 +1,6 @@
 # CredStow — Handoff Document
 
-> **Status**: Nearly-production Android app. Last commit: `757dc5e`
+> **Status**: Production-ready Android app. Last commit: `baf4c4e`
 > **Package**: `com.credstow.app`
 > **Build**: ✅ Debug APK, ✅ Release AAB (R8 full mode + signing), ✅ 56 unit tests (0 failures)
 
