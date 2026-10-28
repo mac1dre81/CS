@@ -255,7 +255,7 @@ fun KeyListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    adUnitId = stringResource(R.string.admob_test_banner),
+                    adUnitId = stringResource(R.string.admob_banner),
                 )
             }
         }
@@ -392,4 +392,5 @@ private fun KeyListContent(
         }
     }
 }
+
 

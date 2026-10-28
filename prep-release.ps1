@@ -15,7 +15,7 @@ $PROD_ADMOB_INTERSTITIAL = "ca-app-pub-YOUR-REAL-APP-ID/YOUR-REAL-INTERSTITIAL-I
 $files = @(
     "app/src/main/res/values/strings.xml",
     "app/src/main/java/com/credstow/app/di/ServiceLocator.kt",
-    "app/src/main/java/com/credstow/app/ui/screens/KeyListScreen.kt",
+    "app/src/main/java/com/credstow/app/ui/screens/KeyListScreen.kt"
 )
 
 foreach ($f in $files) {
@@ -54,4 +54,4 @@ $kls = $kls -replace 'R.string.admob_test_banner', 'R.string.admob_banner'
 Set-Content "app/src/main/java/com/credstow/app/ui/screens/KeyListScreen.kt" $kls
 
 Write-Host "Production AdMob IDs applied. Build with: .\gradlew.bat --no-daemon bundleRelease"
-Write-Host "Play Billing product ID 'pro_unlock' is already configured in AppConst.kt — no change needed."
+Write-Host "Play Billing product ID 'pro_unlock' is already configured in AppConst.kt - no change needed."

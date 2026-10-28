@@ -11,11 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CredStow">
-        <!-- AdMob application ID. The value below is Google's sample/test ID;
-             replace it with your real AdMob app ID before publishing. -->
+
+        <!-- AdMob application ID.
+             The value below MUST exist in res/values/strings.xml as:
+                 <string name="admob_test_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+             The sample ID above is Google's official test App ID.
+             Replace with your real AdMob App ID (ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY)
+             before publishing to the Play Store. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_test_app_id" />
+            android:value="@string/admob_app_id" />
 
         <!-- Displays the bundled (offline) privacy policy in a self-contained WebView. -->
         <activity
@@ -35,6 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!-- Quick Settings tile for one-tap key copying -->
         <service
             android:name=".ui.QuickSettingsTileService"
@@ -54,4 +60,5 @@
     </application>
 
 </manifest>
+
 

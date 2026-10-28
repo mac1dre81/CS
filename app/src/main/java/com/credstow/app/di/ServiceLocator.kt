@@ -90,7 +90,7 @@ class ServiceLocator private constructor(context: Context) {
 
     // --- Ads (free-tier interstitial; Pro users never receive show events) ---
     val interstitialAdManager: InterstitialAdManager by lazy {
-        InterstitialAdManager(appContext, appContext.getString(R.string.admob_test_interstitial))
+        InterstitialAdManager(appContext, appContext.getString(R.string.admob_interstitial))
     }
 
     // --- Use cases ---
@@ -123,4 +123,5 @@ class ServiceLocator private constructor(context: Context) {
             }
     }
 }
+
 

@@ -25,9 +25,9 @@
 
 ### Step 1: Create AdMob ad units
 1. Go to [Google AdMob](https://admob.google.com/) → **Ads** → **Ad units**
-2. Create a **Banner** ad unit → copy the **Ad unit ID**
-3. Create an **Interstitial** ad unit → copy the **Ad unit ID**
-4. Go to **Settings** → **App ID** → copy the **App ID**
+2. Create a **Banner** ad unit → copy the **Ad unit ID**          ca-app-pub-1096022160212922/2887667496
+3. Create an **Interstitial** ad unit → copy the **Ad unit ID**   ca-app-pub-1096022160212922/4836008138
+4. Go to **Settings** → **App ID** → copy the **App ID**          ca-app-pub-1096022160212922~9281961123
 
 ### Step 2: Run the prep-release script
 ```powershell

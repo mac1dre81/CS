@@ -63,8 +63,8 @@
     <string name="detail_test">Test key</string>
     <string name="detail_test_pro">Test ping requires Pro</string>
     <string name="detail_test_running">Testing key…</string>
-    <string name="detail_test_valid">Valid key ✅</string>
-    <string name="detail_test_invalid">Invalid or expired key ❌</string>
+    <string name="detail_test_valid">Valid key </string>
+    <string name="detail_test_invalid">Invalid or expired key </string>
     <string name="detail_test_error">Test inconclusive — check connectivity</string>
     <string name="detail_edit">Edit</string>
     <string name="detail_created">Created %1$s</string>
@@ -93,10 +93,9 @@
          offline via PrivacyPolicyActivity, so no external URL is needed at runtime.
          This string is retained for reference — when you publish to the Play
          Console, enter your real hosted policy URL in the store listing. -->
-    <string name="privacy_policy_url">https://example.com/CredStow-privacy</string>
+    <string name="privacy_policy_url">https://cs-serv.onrender.com</string>
     <string name="settings_pro_title">CredStow Pro</string>
     <string name="settings_pro_body">One-time purchase · Unlimited keys · Key testing · Backup &amp; restore</string>
-    <string name="settings_pro_price">\$4.99</string>
     <string name="settings_pro_unlocked">Pro features unlocked</string>
     <string name="settings_pro_upgrade">Upgrade to Pro</string>
     <string name="settings_pro_trial_start">Start 5-day free trial</string>
@@ -189,15 +188,16 @@
     <string name="error_decryption">Decryption failed — wrong password or corrupted backup.</string>
     <string name="error_generic">Something went wrong. Please try again.</string>
 
-    <!-- AdMob: Google-provided demo (test) IDs. Replace both with your real
-         AdMob application ID + banner unit ID (from the AdMob console) before
-         publishing. Test ads render on any device without registering it. -->
-    <string name="admob_test_app_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="admob_test_banner">ca-app-pub-3940256099942544/6300978111</string>
+        <!-- AdMob: Google-provided demo (test) IDs. Replace all three with your real
+         AdMob application ID + banner/interstitial unit IDs (from the AdMob
+         console) before publishing. Test ads render on any device without
+         registering it. translatable="false" keeps them out of localization. -->
+    <string name="admob_test_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_test_banner" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     <!-- Full-page (interstitial) test ad. Fires for free users every 3 keys saved
          and after ~2 min in-app. Replace with a real AdMob interstitial unit id
          before publishing. No interstitials are shown to Pro users. -->
-    <string name="admob_test_interstitial">ca-app-pub-3940256099942544/1033600233</string>
+    <string name="admob_test_interstitial" translatable="false">ca-app-pub-3940256099942544/1033600233</string>
 
     <!-- Promo code -->
     <string name="settings_redeem_title">Redeem promo code</string>
