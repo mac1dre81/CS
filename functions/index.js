@@ -64,10 +64,10 @@ exports.verifyPurchase = onCall(
     // Runs as the dedicated Play-verifying service account.
     // Grant it 'Google Play Android Developer' (GCP IAM) + 'Release manager' (Play Console).
     serviceAccount: "play-verifier@credstor-backend.iam.gserviceaccount.com",
-    // NOTE: Grant this SA these GCP IAM roles:
-    //   1. "roles/androidpublisher.user" (Google Play Android Developer)
-    //   2. "roles/iam.serviceAccountUser" (Service Account User)
-    // Then add it as a "Release manager" in Play Console → Setup → App integrity → API access
+    // NOTE: Grant access via Play Console → Setup → App integrity → API access
+    //       Add this SA email and grant "Release manager" role.
+    // The roles/androidpublisher.user GCP IAM role is NOT needed and may fail
+    // to assign if no Play Developer account is linked at the GCP level.
   },
   async (request) => {
     // 1. Require authentication
