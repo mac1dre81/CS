@@ -61,11 +61,13 @@ const ALLOWED_PRODUCTS = ["pro_unlock", "pro_monthly", "pro_yearly"];
 
 exports.verifyPurchase = onCall(
   {
-    // Uses the default runtime service account for this Cloud Function.
-    // Grant it the "Google Play Android Developer" role in IAM + add it as a
-    // user in Play Console with Release Manager access.
-    // To find the SA email: Play Console → Setup → API access (or
-    // IAM & Admin → Service Accounts → the default Compute Engine SA).
+    // Runs as the dedicated Play-verifying service account.
+    // Grant it 'Google Play Android Developer' (GCP IAM) + 'Release manager' (Play Console).
+    serviceAccount: "play-verifier@credstor-backend.iam.gserviceaccount.com",
+    // NOTE: Grant this SA these GCP IAM roles:
+    //   1. "roles/androidpublisher.user" (Google Play Android Developer)
+    //   2. "roles/iam.serviceAccountUser" (Service Account User)
+    // Then add it as a "Release manager" in Play Console → Setup → App integrity → API access
   },
   async (request) => {
     // 1. Require authentication
