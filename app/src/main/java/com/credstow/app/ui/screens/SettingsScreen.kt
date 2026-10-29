@@ -45,6 +45,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -361,6 +362,16 @@ fun SettingsScreen(
                     activity.startActivity(Intent(activity, com.credstow.app.ui.PrivacyPolicyActivity::class.java))
                 },
                 testTag = "settings_privacy",
+            )
+            SettingsRow(
+                title = stringResource(R.string.settings_data_deletion),
+                subtitle = stringResource(R.string.settings_data_deletion_summary),
+                icon = Icons.Default.Delete,
+                enabled = true,
+                onClick = {
+                    activity.startActivity(Intent(activity, com.credstow.app.ui.DataDeletionActivity::class.java))
+                },
+                testTag = "settings_data_deletion",
             )
             SettingsRow(
                 title = stringResource(R.string.settings_redeem_title),

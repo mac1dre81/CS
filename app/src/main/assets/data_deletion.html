@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Deletion — CredStow</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         line-height: 1.6; color: #1e293b; max-width: 42rem; margin: 0 auto; padding: 1.5rem; }
+  h1 { font-size: 1.6rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: .5rem; margin-top: 2rem; }
+  h1:first-child { margin-top: 0; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin-top: 1.75rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.25rem; }
+  p { margin: .75rem 0; }
+  ul { margin: .5rem 0; padding-left: 1.5rem; }
+  li { margin: .25rem 0; }
+  .muted { color: #64748b; font-size: .9rem; }
+  .tag { display: inline-block; background: #eff6ff; color: #1d4ed8; padding: .1rem .5rem;
+         border-radius: .25rem; font-size: .8rem; font-weight: 600; }
+  code { background: #f1f5f9; padding: .1rem .3rem; border-radius: .2rem; font-size: .85em; }
+  .warn { background: #fffbeb; border-left: 3px solid #f59e0b; padding: .75rem 1rem; margin: 1rem 0; }
+  .ok  { background: #ecfdf5; border-left: 3px solid #10b981; padding: .75rem 1rem; margin: 1rem 0; }
+  .code-block { background: #0f172a; color: #e2e8f0; padding: 1rem; border-radius: .5rem;
+                font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: .85rem;
+                line-height: 1.5; overflow-x: auto; }
+  .step { background: #eff6ff; border-left: 3px solid #3b82f6; padding: .75rem 1rem; margin: .75rem 0; border-radius: .25rem; }
+  .step-number { display: inline-block; background: #3b82f6; color: white; width: 1.5rem; height: 1.5rem;
+                 border-radius: 50%; text-align: center; line-height: 1.5rem; font-weight: 700; margin-right: .5rem;
+                 font-family: inherit; }
+</style>
+</head>
+<body>
+
+<h1>CredStow Data Deletion</h1>
+
+<p class="muted">
+  <span class="tag">Developer: CredStow</span>
+  App: CredStow • Package: <code>com.credstow.app</code> • Effective: October 2026
+</p>
+
+<p><strong>CredStow</strong> ("the app", "we", "us") is an Android
+application that securely stores and optionally validates your AI API keys (OpenAI, Anthropic, Google, Hugging Face, etc.).</p>
+
+<h2>How to Request Data Deletion</h2>
+
+<p>You can delete your data from CredStow using any of the methods below. No account registration is required — all data is stored entirely on your device.</p>
+
+<div class="step">
+  <strong><span class="step-number">1</span>Delete individual keys within the app</strong><br>
+  Open CredStow → tap the padlock icon on any key to unlock it → swipe the key to the right to delete it.
+  The encrypted key is permanently removed from your device immediately.
+</div>
+
+<div class="step">
+  <strong><span class="step-number">2</span>Clear all app data (recommended for full deletion)</strong><br>
+  Open your device's <strong>Settings</strong> → <strong>Apps</strong> → <strong>CredStow</strong> → <strong>Storage</strong> → <strong>Clear data</strong>.<br>
+  This deletes all stored keys, settings, preferences, and Pro trial data from your device instantly.
+</div>
+
+<div class="step">
+  <strong><span class="step-number">3</span>Uninstall the app</strong><br>
+  Simply uninstall CredStow from your device. All data is removed.
+</div>
+
+<div class="step">
+  <strong><span class="step-number">4</span>Request a Pro refund (optional)</strong><br>
+  If you purchased Pro and want a refund: open <strong>Google Play Store</strong> → <strong>Menu</strong> → <strong>Subscriptions &amp; purchases</strong> → find your CredStow purchase → <strong>Request refund.</strong>
+</div>
+
+<p class="muted">Steps 1–3 delete data locally on your device. No server data exists to delete.</p>
+
+<h2>Data Deletion Summary</h2>
+
+<h3>✅ Data that is deleted</h3>
+<ul>
+  <li><strong>API keys</strong>: All stored API keys (OpenAI, Anthropic, Google, etc.) are encrypted on-device. Deleted immediately via any of the methods above.</li>
+  <li><strong>Key metadata</strong> (labels, statuses, expiry dates, sort preferences): Removed when you clear app data or uninstall.</li>
+  <li><strong>Settings</strong> (biometric lock, auto-lock timer, font scale, clipboard auto-clear, onboarding state): Removed when you clear app data or uninstall.</li>
+  <li><strong>Pro trial data</strong> (trial start/end timestamps): Removed when you clear app data or uninstall.</li>
+  <li><strong>DataStore preferences</strong> (purchased product IDs, interstitial ad counters): Removed when you clear app data or uninstall.</li>
+</ul>
+
+<h3>⏳ Data that may be retained</h3>
+<table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid #cbd5e1; padding: .5rem; text-align: left; background: #f8fafc;">Data Type</th>
+      <th style="border: 1px solid #cbd5e1; padding: .5rem; text-align: left; background: #f8fafc;">Retention</th>
+      <th style="border: 1px solid #cbd5e1; padding: .5rem; text-align: left; background: #f8fafc;">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Purchase records (pro_unlock)</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Retained by Google Play</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Managed by Google Play Billing. Request refund through Play Store.</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Crash reports</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Retained by Firebase (90 days)</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">No API keys or user content in crash reports. Auto-deletes after 90 days.</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Ad serving events (free tier)</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Retained per AdMob policy</td>
+      <td style="border: 1px solid #cbd5e1; padding: .5rem;">Managed by Google AdMob. Opt out via Ads Settings.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Support</h2>
+
+<p>If you need assistance deleting your data:</p>
+<ul>
+  <li>Review the steps above — no account or server data exists to delete</li>
+  <li>Email the developer: <a href="mailto:aash281@gmail.com">aash281@gmail.com</a></li>
+</ul>
+
+<p class="muted">CredStow is developed by aash281@gmail.com. This page was last updated October 2026.</p>
+
+</body>
+</html>

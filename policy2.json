@@ -1,0 +1,54 @@
+﻿{
+    "bindings":  [
+                     {
+                         "members":  [
+                                         "serviceAccount:service-1062291282180@gcf-admin-robot.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/cloudfunctions.standardServiceAgent"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:credstor-backend@appspot.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/editor"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:service-1062291282180@gcp-sa-firebase.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/firebase.managementServiceAgent"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:firebase-adminsdk-fbsvc@credstor-backend.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/firebase.sdkAdminServiceAgent"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:firebase-adminsdk-fbsvc@credstor-backend.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/iam.serviceAccountTokenCreator"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:play-verifier@credstor-backend.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/iam.serviceAccountUser"
+                     },
+                     {
+                         "members":  [
+                                         "user:aash281@gmail.com"
+                                     ],
+                         "role":  "roles/owner"
+                     },
+                     {
+                         "members":  [
+                                         "serviceAccount:play-verifier@credstor-backend.iam.gserviceaccount.com"
+                                     ],
+                         "role":  "roles/androidpublisher.user"
+                     }
+                 ],
+    "etag":  "BwZe8iFxGVs=",
+    "version":  1
+}

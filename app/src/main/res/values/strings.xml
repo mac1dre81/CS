@@ -89,6 +89,8 @@
     <string name="settings_import">Import backup</string>
     <string name="settings_import_summary">AES-256-GCM encrypted · Pro only</string>
     <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_data_deletion">Delete my data</string>
+    <string name="settings_data_deletion_summary">Delete keys, settings, and reset trial</string>
     <!-- The app now bundles its privacy policy in assets/ and renders it
          offline via PrivacyPolicyActivity, so no external URL is needed at runtime.
          This string is retained for reference — when you publish to the Play
@@ -99,6 +101,7 @@
     <string name="settings_pro_unlocked">Pro features unlocked</string>
     <string name="settings_pro_upgrade">Upgrade to Pro</string>
     <string name="settings_pro_trial_start">Start 5-day free trial</string>
+    <string name="settings_pro_price">$4.99</string>
     <string name="settings_pro_trial_started">Free Pro trial started! Enjoy all features for 5 days.</string>
     <string name="settings_pro_trial_remaining">Free trial ends in %1$d days</string>
     <string name="settings_pro_trial_expired">Your free trial has expired. Upgrade to Pro for full access.</string>

@@ -20,11 +20,18 @@
              before publishing to the Play Store. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id" />
+            android:value="@string/admob_test_app_id" />
 
         <!-- Displays the bundled (offline) privacy policy in a self-contained WebView. -->
         <activity
             android:name=".ui.PrivacyPolicyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CredStow"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Displays the bundled (offline) data-deletion instructions in a self-contained WebView. -->
+        <activity
+            android:name=".ui.DataDeletionActivity"
             android:exported="false"
             android:theme="@style/Theme.CredStow"
             android:parentActivityName=".MainActivity" />
