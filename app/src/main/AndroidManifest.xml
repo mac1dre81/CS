@@ -4,6 +4,9 @@
     <!-- AdMob needs network access to fetch banner ads. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Required to use Google Play Billing for Pro unlock IAP. -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <!-- Required on Android 13+ for AdMob to access the Advertising ID. -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
