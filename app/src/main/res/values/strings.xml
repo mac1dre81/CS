@@ -206,7 +206,7 @@
     <string name="settings_redeem_title">Redeem promo code</string>
     <string name="settings_redeem_summary">Have a code? Tap to redeem in the Play Store</string>
     <string name="settings_restore_purchases">Restore purchases</string>
-    <string name="settings_restore_summary">Re-check your Pro status if you upgraded on another device</string>
+    <string name="settings_restore_summary">Restore your Pro purchase from Google Play</string>
     <string name="billing_redeem_failed">Unable to open the Play Store. Please redeem your code manually in the Play Store app.</string>
 </resources>
 

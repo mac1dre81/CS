@@ -33,7 +33,7 @@ class SettingsProState(
         else settings.isPro
 
     /**
-     * Effective Pro state including the free 7-day trial. Returns true when
+     * Effective Pro state including the free 5-day trial. Returns true when
      * *either* the product is purchased *or* a trial is still running.
      */
     val isProEffective: Flow<Boolean> =
