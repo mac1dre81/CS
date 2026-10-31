@@ -79,7 +79,7 @@ a {
   text-decoration: none;
 }
 a:hover { text-decoration: underline; }
-a:visited { color: #5b21b6; }
+a:visited:not(.btn) { color: #5b21b6; }
 
 .btn {
   display: inline-block;
