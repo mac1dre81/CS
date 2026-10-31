@@ -122,7 +122,7 @@ a:visited { color: #6d28d9; }
   background: var(--color-primary);
   color: #fff;
 }
-.btn-lg { font-size: 1.1rem; padding: 1rem 2rem; }
+.btn-lg { font-size: 1.1rem; font-weight: 700; padding: 1rem 2rem; }
 
 /* ---- Header / nav ---- */
 .header {
