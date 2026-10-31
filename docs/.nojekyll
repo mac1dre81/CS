@@ -1,0 +1,3 @@
+# This file tells GitHub Pages to use Static Mode (no Jekyll processing).
+# This ensures all files in the docs/ folder are served as-is,
+# including images, SVGs, and custom routing.

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="https://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://mac1dre81.github.io/CS/</loc>
+    <lastmod>2026-10-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/hero-mockup.svg</image:loc>
+      <image:caption>CredStow mobile app — securely store your AI API keys</image:caption>
+      <image:title>CredStow Hero Mockup</image:title>
+    </image:image>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://mac1dre81.github.io/CS/privacy_policy.html</loc>
+    <lastmod>2026-10-12</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Data Deletion -->
+  <url>
+    <loc>https://mac1dre81.github.io/CS/data_deletion.html</loc>
+    <lastmod>2026-10-29</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- All images on the site -->
+  <url>
+    <loc>https://mac1dre81.github.io/CS/</loc>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/screenshot-list.svg</image:loc>
+      <image:caption>CredStow key list screen</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/screenshot-detail.svg</image:loc>
+      <image:caption>CredStow key detail screen</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/screenshot-addkey.svg</image:loc>
+      <image:caption>CredStow add key screen</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/screenshot-settings.svg</image:loc>
+      <image:caption>CredStow settings screen</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://mac1dre81.github.io/CS/images/tecmarketa-logo.svg</image:loc>
+      <image:caption>TecMarketa logo</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

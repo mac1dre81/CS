@@ -1,0 +1,23 @@
+# CredStow Landing Page — robots.txt
+# Hosted on GitHub Pages (mac1dre81.github.io/CS)
+#
+# This file controls how search engine crawlers (Googlebot, Bingbot, etc.)
+# access and index the TecMarketa / CredStow landing page and policy pages.
+
+User-agent: *
+# Allow all pages to be crawled and indexed
+Allow: /
+
+# Sitemap — tells Google all the pages on this site
+Sitemap: https://mac1dre81.github.io/CS/sitemap.xml
+
+# Crawl-delay for polite crawlers (Google ignores this)
+Crawl-delay: 10
+
+# Disallow paths that should not be indexed
+User-agent: *
+Disallow: /functions/
+Disallow: /app/
+Disallow: /.git/
+Disallow: /build/
+Disallow: /*.gradle/

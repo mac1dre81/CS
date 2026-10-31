@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Essential meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2563eb">
+
+  <!-- Primary SEO -->
+  <title>CredStow — Secure AI API Key Manager | TecMarketa</title>
+  <meta name="description" content="CredStow by TecMarketa is a secure Android app for storing, organizing, and testing your AI API keys (OpenAI, Anthropic, Google Gemini, and 12+ providers). AES-256-GCM encryption, Android Keystore, biometric lock — all on-device, no account required.">
+  <meta name="keywords" content="API key manager, AI API keys, secure storage, OpenAI key manager, Anthropic API, Google Gemini, password manager, Android app, AES-256 encryption, on-device storage, no account required, credential vault, TecMarketa, CredStow">
+
+  <!-- Canonical URL — update if you point a custom domain at GitHub Pages -->
+  <link rel="canonical" href="https://mac1dre81.github.io/CS/">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="images/favicon.svg" type="image/svg+xml">
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="CredStow — Secure AI API Key Manager">
+  <meta property="og:description" content="Store, organize, and test your AI API keys securely on your Android device. AES-256-GCM encryption. 12+ providers supported. No account needed.">
+  <meta property="og:image" content="https://mac1dre81.github.io/CS/images/hero-mockup.svg">
+  <meta property="og:image:alt" content="CredStow mobile app — securely store your AI API keys on Android">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mac1dre81.github.io/CS/">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CredStow — Secure AI API Key Manager">
+  <meta name="twitter:description" content="Store, organize, and test your AI API keys securely on your Android device.">
+  <meta name="twitter:image" content="https://mac1dre81.github.io/CS/images/hero-mockup.svg">
+
+  <!-- Google-specific -->
+  <!-- Replace the content with your Google Search Console verification token -->
+  <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_TOKEN">
+  <!-- This tells Google the page is about software/apps, not hidden text -->
+  <meta name="google" content="notranslate">
+
+  <!-- Mobile optimization -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CredStow">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ================================================================
+       Google Ads & Analytics
+       Uncomment and fill in your IDs once you create them.
+       Place the gtag.js snippet in the <head> for earliest loading.
+  ================================================================
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    // Google Ads (Google Ads Conversion Tracking)
+    gtag('config', 'AW-XXXXXXXXX');
+    // Google Analytics 4 (optional)
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  ================================================================ -->
+
+  <!-- ================================================================
+       Structured Data (JSON-LD) — helps Google understand the page
+       for rich results, Search Console, and Google Ads analysis.
+  ================================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "CredStow by TecMarketa",
+    "url": "https://mac1dre81.github.io/CS/",
+    "description": "CredStow is a secure Android app by TecMarketa for storing, organizing, and testing AI API keys with on-device AES-256-GCM encryption.",
+    "inLanguage": "en-US",
+    "publisher": {
+      "@type": "Organization",
+      "name": "TecMarketa",
+      "url": "https://mac1dre81.github.io/CS/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://mac1dre81.github.io/CS/images/tecmarketa-logo.svg",
+        "width": 480,
+        "height": 120
+      },
+      "sameAs": [
+        "https://play.google.com/store/apps/details?id=com.credstow.app"
+      ],
+      "email": "tecmarketa@gmail.com"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://mac1dre81.github.io/CS/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "CredStow",
+    "alternateName": "CredStow — Secure AI Key Vault",
+    "description": "Securely store, organize, and test your AI API keys (OpenAI, Anthropic, Google Gemini, and 12+ providers) on Android with AES-256-GCM encryption and Android Keystore protection.",
+    "applicationCategory": "Utilities",
+    "operatingSystem": "Android",
+    "platform": "Android",
+    "keywords": "API key manager, AI API keys, secure storage, OpenAI, Anthropic, Google Gemini, encryption, password manager, on-device, no account, credential vault, credential management, AES-256, biometric, TecMarketa",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Free tier: up to 3 API keys with ads"
+    },
+    "featureList": [
+      "AES-256-GCM encryption with Android Keystore",
+      "Supports 12+ AI providers (OpenAI, Anthropic, Google Gemini, OpenRouter, Hugging Face, Cohere, Mistral, Together AI, xAI/Grok, Replicate, Azure OpenAI)",
+      "Biometric lock (fingerprint or face)",
+      "Clipboard auto-clear (5-120 seconds)",
+      "Quick Settings tile for one-tap key copy",
+      "Key status testing (Pro)",
+      "Encrypted backup & restore (Pro)",
+      "Ad-free experience (Pro)",
+      "Custom key sorting (Pro)",
+      "Key expiration tracking (Pro)",
+      "No account or registration required"
+    ],
+    "offers": [
+      {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "name": "Free",
+        "description": "Up to 3 API keys, banner and interstitial ads"
+      },
+      {
+        "@type": "Offer",
+        "price": "4.99",
+        "priceCurrency": "USD",
+        "name": "Pro",
+        "description": "One-time purchase: unlimited keys, no ads, key testing, encrypted backup"
+      }
+    ],
+    "author": {
+      "@type": "Organization",
+      "name": "TecMarketa"
+    },
+    "datePublished": "2026-10-01",
+    "dateModified": "2026-10-31"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is CredStow?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CredStow is a secure Android app by TecMarketa that stores, organizes, and optionally tests your AI API keys with military-grade AES-256-GCM encryption. All data stays on your device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI providers does CredStow support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CredStow supports 12+ providers: OpenAI, Anthropic, Google Gemini, OpenRouter, Azure OpenAI, Hugging Face, Cohere, Mistral, Together AI, xAI/Grok, Replicate, and a custom 'Other' option."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is CredStow free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CredStow offers a free tier (up to 3 API keys with banner/interstitial ads) and a Pro tier (one-time $4.99 purchase) that unlocks unlimited keys, ad-free experience, key testing, encrypted backup, custom sorting, and expiration tracking. A 5-day free Pro trial is also available."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data secure and private?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Your API keys are encrypted with AES-256-GCM and the encryption key is stored in the Android Keystore. No account is required. Your keys never leave your device and we collect no analytics or telemetry. See our Privacy Policy for details."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <!-- =============================================================
+       Header / Navigation
+  ============================================================= -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="logo" aria-label="TecMarketa — home">
+          <img src="images/tecmarketa-logo.svg" alt="TecMarketa — Secure Apps &amp; Content" width="180" height="45" loading="eager">
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#features">Features</a>
+          <a href="#screenshots">Screenshots</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- =============================================================
+         Hero Section
+    ============================================================= -->
+    <section class="hero">
+      <div class="container">
+        <h1>Secure Your AI API Keys — <br>All in One Place</h1>
+        <p class="subtitle">
+          CredStow by TecMarketa is a privacy-first Android app that stores,
+          organizes, and tests your AI API keys with AES-256-GCM encryption.
+          Supports OpenAI, Anthropic, Google Gemini, and 12+ AI providers.
+          No account required — everything stays on your device.
+        </p>
+        <div class="cta-group">
+          <a href="https://play.google.com/store/apps/details?id=com.credstow.app"
+             class="btn btn-primary btn-lg"
+             target="_blank" rel="noopener">
+            Get it on Google Play
+          </a>
+          <a href="#pricing" class="btn btn-outline btn-lg">See Pricing</a>
+        </div>
+        <p class="trust">
+          <span class="tag">Android 7.0+</span>
+          <span class="tag">AES-256-GCM Encryption</span>
+          <span class="tag">No Account Required</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Hero mockup image — below the fold on mobile, beside text on desktop -->
+    <section class="section-sm" style="background: var(--color-bg-alt);">
+      <div class="container" style="display: flex; justify-content: center;">
+        <img src="images/hero-mockup.svg"
+             alt="CredStow mobile app showing securely stored AI API keys with provider icons and status indicators"
+             width="320" height="500" loading="eager"
+             style="max-width: 100%; height: auto; display: block;">
+      </div>
+    </section>
+
+    <!-- =============================================================
+         Key value props (stats)
+    ============================================================= -->
+    <section class="section-sm">
+      <div class="container">
+        <div style="display: flex; justify-content: space-around; text-align: center; flex-wrap: wrap; gap: 2rem;">
+          <div>
+            <div class="stat-number">12+</div>
+            <div class="stat-label">AI Providers Supported</div>
+          </div>
+          <div>
+            <div class="stat-number">256</div>
+            <div class="stat-label">Bit AES Encryption</div>
+          </div>
+          <div>
+            <div class="stat-number">0</div>
+            <div class="stat-label">Data Sent to Our Servers</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================
+         Features
+    ============================================================= -->
+    <section class="section" id="features">
+      <div class="container">
+        <h2 style="text-align: center; margin-bottom: 1rem;">Everything You Need to Manage AI API Keys</h2>
+        <p class="muted" style="text-align: center; max-width: 40rem; margin: 0 auto 3rem;">
+          CredStow by TecMarketa brings enterprise-grade security to your AI API keys — encrypted on-device,
+          organized by provider, and tested with a single tap.
+        </p>
+
+        <div class="features-grid">
+          <!-- Security -->
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Military-Grade Encryption</h3>
+            <p>Your API keys are encrypted with AES-256-GCM and stored in the Android Keystore.
+              Two layers of at-rest encryption protect your secrets even if your device is compromised.
+              No plaintext is ever written to disk.</p>
+          </article>
+
+          <!-- On-device -->
+          <article class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>100% On-Device</h3>
+            <p>No account, no registration, no cloud sync. All keys and data stay on your device.
+              We never see your keys, collect no analytics, and send no telemetry. True local-first security.</p>
+          </article>
+
+          <!-- Biometric -->
+          <article class="feature-card">
+            <div class="feature-icon">🧬</div>
+            <h3>Biometric Lock</h3>
+            <p>Protect your vault with fingerprint or face unlock. A configurable auto-lock timer
+              secures the app when idle. Sensitive actions require re-authentication.</p>
+          </article>
+
+          <!-- Provider support -->
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>12+ AI Providers</h3>
+            <p>OpenAI, Anthropic, Google Gemini, OpenRouter, Hugging Face, Cohere, Mistral,
+              Together AI, xAI/Grok, Replicate, Azure OpenAI, and custom providers.
+              Each has its own icon and test endpoint.</p>
+          </article>
+
+          <!-- Key testing -->
+          <article class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Key Testing (Pro)</h3>
+            <p>Verify your API keys are valid with a single tap. CredStow pings the provider's
+              official endpoint and reports the status — without logging the key or response.</p>
+          </article>
+
+          <!-- Backup -->
+          <article class="feature-card">
+            <div class="feature-icon">📦</div>
+            <h3>Encrypted Backup (Pro)</h3>
+            <p>Export a password-protected AES-256-GCM encrypted backup of your vault.
+              Restore on a new device or keep a safe copy — the password is never stored or transmitted.</p>
+          </article>
+
+          <!-- Clipboard -->
+          <article class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Clipboard Auto-Clear</h3>
+            <p>Copied keys are automatically wiped from the clipboard after a customizable interval
+              (5–120 seconds). Never worry about leaving secrets on your clipboard.</p>
+          </article>
+
+          <!-- Quick Settings -->
+          <article class="feature-card">
+            <div class="feature-icon">🎛️</div>
+            <h3>Quick Settings Tile</h3>
+            <p>Add a tile to your Android Quick Settings panel for instant key access.
+              Copy any key to the clipboard without unlocking your device.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================
+         Screenshots Gallery
+    ============================================================= -->
+    <section class="section-sm" style="background: var(--color-bg-alt);" id="screenshots">
+      <div class="container">
+        <h2 style="text-align: center; margin-bottom: 1rem;">Simple, Secure, Elegant</h2>
+        <p class="muted" style="text-align: center; max-width: 40rem; margin: 0 auto 3rem;">
+          A clean Material 3 design that puts your keys front and center.
+          Every interaction is designed for speed and security.
+        </p>
+
+        <div class="gallery">
+          <figure class="screenshot">
+            <img src="images/screenshot-list.svg" alt="CredStow key list — securely stored AI API keys with OpenAI, Anthropic, and Google Gemini, status chips showing Valid and Untested" width="240" height="500" loading="lazy">
+            <figcaption>Key List — All your keys at a glance</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <img src="images/screenshot-detail.svg" alt="CredStow key detail — decrypt and copy your API key with a secure copy button" width="240" height="500" loading="lazy">
+            <figcaption>Key Detail — Copy keys securely</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <img src="images/screenshot-addkey.svg" alt="CredStow add key screen — enter provider, label, and API key" width="240" height="500" loading="lazy">
+            <figcaption>Add Key — Simple, guided entry</figcaption>
+          </figure>
+
+          <figure class="screenshot">
+            <img src="images/screenshot-settings.svg" alt="CredStow settings — Pro features, biometric lock, encrypted backup, clipboard auto-clear" width="240" height="500" loading="lazy">
+            <figcaption>Settings — Security &amp; Pro controls</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================================================
+         Pricing
+    ============================================================= -->
+    <section class="section" id="pricing">
+      <div class="container" style="text-align: center;">
+        <h2 style="margin-bottom: 1rem;">Simple, Transparent Pricing</h2>
+        <p class="muted" style="max-width: 40rem; margin: 0 auto 3rem;">
+          Use CredStow free with up to 3 API keys. Upgrade to Pro for unlimited keys,
+          key testing, encrypted backup, and an ad-free experience.
+          A 5-day free Pro trial is included — no credit card required.
+        </p>
+
+        <div class="pricing-grid">
+          <!-- Free tier -->
+          <div class="pricing-card">
+            <h3 style="font-size: 1.25rem; margin-bottom: .5rem;">Free</h3>
+            <div class="price">$0<span class="small"> / forever</span></div>
+            <ul style="text-align: left; margin: 1.5rem 0; padding-left: 1.25rem; font-size: .9rem;">
+              <li style="margin-bottom: .5rem;">✓ Up to 3 API keys</li>
+              <li style="margin-bottom: .5rem;">✓ AES-256-GCM encryption</li>
+              <li style="margin-bottom: .5rem;">✓ Biometric lock</li>
+              <li style="margin-bottom: .5rem;">✓ Clipboard auto-clear</li>
+              <li style="margin-bottom: .5rem;">✓ Quick Settings tile</li>
+              <li style="margin-bottom: .5rem; color: var(--color-text-dim);">✗ Key testing</li>
+              <li style="margin-bottom: .5rem; color: var(--color-text-dim);">✗ Encrypted backup</li>
+              <li style="margin-bottom: .5rem; color: var(--color-text-dim);">✗ Ad-free</li>
+            </ul>
+            <a href="https://play.google.com/store/apps/details?id=com.credstow.app"
+               class="btn btn-secondary" target="_blank" rel="noopener">Get on Google Play</a>
+          </div>
+
+          <!-- Pro tier -->
+          <div class="pricing-card popular">
+            <h3 style="font-size: 1.25rem; margin-bottom: .5rem; color: var(--color-primary);">CredStow Pro</h3>
+            <div class="price">$4.99<span class="small"> · one-time</span></div>
+            <ul style="text-align: left; margin: 1.5rem 0; padding-left: 1.25rem; font-size: .9rem;">
+              <li style="margin-bottom: .5rem;">✓ Unlimited API keys</li>
+              <li style="margin-bottom: .5rem;">✓ Key testing (valid/invalid)</li>
+              <li style="margin-bottom: .5rem;">✓ Encrypted backup &amp; restore</li>
+              <li style="margin-bottom: .5rem;">✓ Ad-free experience</li>
+              <li style="margin-bottom: .5rem;">✓ Key expiration tracking</li>
+              <li style="margin-bottom: .5rem;">✓ Custom sort order</li>
+              <li style="margin-bottom: .5rem;">✓ 5-day free trial included</li>
+            </ul>
+            <a href="https://play.google.com/store/apps/details?id=com.credstow.app"
+               class="btn btn-primary" target="_blank" rel="noopener">Upgrade to Pro</a>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top: 2rem; font-size: .85rem;">
+          All purchases are processed securely through Google Play Billing.
+          Cancel anytime — no subscriptions, no recurring charges.
+        </p>
+      </div>
+    </section>
+
+    <!-- =============================================================
+         FAQ
+    ============================================================= -->
+    <section class="section" id="faq">
+      <div class="container">
+        <h2 style="text-align: center; margin-bottom: 1rem;">Frequently Asked Questions</h2>
+        <p class="muted" style="text-align: center; max-width: 40rem; margin: 0 auto 3rem;">
+          Everything you need to know about CredStow, security, and privacy.
+        </p>
+
+        <div style="max-width: 640px; margin: 0 auto;">
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              What is CredStow?
+            </summary>
+            <div class="faq-answer">
+              CredStow is a secure Android app by TecMarketa that stores, organizes, and optionally
+              tests your AI API keys (OpenAI, Anthropic, Google Gemini, and 12+ providers) with
+              AES-256-GCM encryption. All data stays on your device — no account or cloud storage required.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              Which AI providers are supported?
+            </summary>
+            <div class="faq-answer">
+              OpenAI, Anthropic, Google Gemini, OpenRouter, Azure OpenAI, Hugging Face, Cohere,
+              Mistral, Together AI, xAI/Grok, Replicate, and a custom "Other" option.
+              Each provider has its own icon and, where supported, a test endpoint.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              Is CredStow free or paid?
+            </summary>
+            <div class="faq-answer">
+              CredStow offers a <strong>free tier</strong> (up to 3 API keys, banner and interstitial ads)
+              and a <strong>Pro tier</strong> (one-time $4.99 payment) that unlocks unlimited keys,
+              ad-free experience, key testing, encrypted backup, custom sorting, and expiration tracking.
+              A 5-day free Pro trial is available — no credit card required.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              Is my data secure and private?
+            </summary>
+            <div class="faq-answer">
+              Yes. Your API keys are encrypted with AES-256-GCM and the encryption key is stored in the
+              Android Keystore (hardware-backed where available). No account is required, and we never
+              see, collect, or transmit your keys. No analytics or telemetry is sent to the developer.
+              See our <a href="privacy_policy.html">Privacy Policy</a> and <a href="data_deletion.html">Data Deletion</a> pages for full details.
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              Can I test if my API keys are still valid?
+            </summary>
+            <div class="faq-answer">
+              Yes — Pro users can tap "Test key" on any key's detail screen. CredStow sends a minimal
+              request directly to the provider's official API endpoint and reports the status.
+              The key and response are never logged. (Free tier shows status as "Untested".)
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary class="faq-question" style="cursor: pointer;">
+              What happens if I uninstall the app?
+            </summary>
+            <div class="faq-answer">
+              Uninstalling CredStow permanently deletes all keys, metadata, and settings from your device.
+              The encryption keys are destroyed, making recovery impossible. If you use Pro backup/export,
+              make sure to save your encrypted backup before uninstalling.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =============================================================
+       Footer
+  ============================================================= -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div>
+          <a href="/">
+            <img src="images/tecmarketa-logo.svg" alt="TecMarketa" width="160" height="40" loading="lazy">
+          </a>
+          <p style="margin-top: 1rem; font-size: .85rem; color: #94a3b8;">
+            TecMarketa creates secure, privacy-first mobile apps and content.
+            CredStow is our flagship Android app for AI API key management.
+          </p>
+        </div>
+
+        <!-- Links -->
+        <div>
+          <h4>Product</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: .9rem;">
+            <li style="margin-bottom: .5rem;"><a href="#features">Features</a></li>
+            <li style="margin-bottom: .5rem;"><a href="#pricing">Pricing</a></li>
+            <li style="margin-bottom: .5rem;"><a href="#screenshots">Screenshots</a></li>
+            <li style="margin-bottom: .5rem;"><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Legal</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: .9rem;">
+            <li style="margin-bottom: .5rem;"><a href="privacy_policy.html">Privacy Policy</a></li>
+            <li style="margin-bottom: .5rem;"><a href="data_deletion.html">Data Deletion</a></li>
+            <li style="margin-bottom: .5rem;"><a href="https://play.google.com/store/apps/details?id=com.credstow.app" target="_blank" rel="noopener">Google Play Store</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Contact</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: .9rem;">
+            <li style="margin-bottom: .5rem;">
+              Email: <a href="mailto:tecmarketa@gmail.com">tecmarketa@gmail.com</a>
+            </li>
+            <li style="margin-bottom: .5rem;">
+              Package: com.credstow.app
+            </li>
+            <li style="margin-bottom: .5rem;">
+              © 2026 TecMarketa
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p style="margin: 0;">
+          CredStow is a registered trademark of TecMarketa.
+          This site is hosted on GitHub Pages.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =============================================================
+       Google Ads Conversion Tracking
+       Place this snippet on pages where you want to track conversions
+       (e.g., after a user clicks through to the Play Store).
+       Replace G-XXXXXXXXXX with your Google Analytics 4 measurement ID
+       and AW-XXXXXXXXX with your Google Ads conversion ID.
+  ================================================================
+  <script>
+    // Example: Track Play Store link clicks as conversions
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('a[href*="play.google.com"]');
+      if (link) {
+        e.preventDefault();
+        gtag('event', 'conversion', {
+          'send_to': 'AW-XXXXXXXXX/XXXXXXXXXX',
+          'event_callback': function() {
+            window.location.href = link.href;
+          }
+        });
+        setTimeout(function() { window.location.href = link.href; }, 2000);
+      }
+    });
+  </script>
+  ================================================================ -->
+
+  <!-- Smooth accordion for FAQ -->
+  <script>
+    // FAQ details/summary enhancement — optional, accessible by default
+    document.querySelectorAll('.faq-question').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var parent = this.parentElement;
+        parent.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

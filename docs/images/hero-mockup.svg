@@ -1,0 +1,78 @@
+<!-- Hero mockup: phone showing CredStow key list on a gradient background -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="CredStow hero — secure AI key manager on phone">
+  <defs>
+    <linearGradient id="hero-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#2563eb"/>
+      <stop offset="55%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="shadow-hero" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#hero-bg)"/>
+  <!-- Floating shapes -->
+  <circle cx="180" cy="120" r="80" fill="#ffffff10"/>
+  <circle cx="680" cy="520" r="60" fill="#ffffff08"/>
+  <!-- Phone frame -->
+  <g transform="translate(380,300)" filter="url(#shadow-hero)">
+    <rect x="-110" y="-230" width="220" height="460" rx="52" ry="52"
+          fill="#f8fafc" stroke="#e2e8f0" stroke-width="4"/>
+    <!-- Screen inset -->
+    <rect x="-104" y="-224" width="208" height="448" rx="46" ry="46"
+          fill="#0f172a"/>
+    <!-- Volume buttons (left) -->
+    <circle cx="-116" cy="-150" r="4" fill="#cbd5e1"/>
+    <circle cx="-116" cy="-110" r="4" fill="#cbd5e1"/>
+    <!-- Power button (right) -->
+    <rect x="116" y="-120" width="8" height="50" rx="4" fill="#cbd5e1"/>
+    <!-- Home indicator (bottom) -->
+    <rect x="-50" y="218" width="100" height="6" rx="3" fill="#94a3b8"/>
+    <!-- Screen content -->
+    <g transform="translate(-92, -212)">
+      <!-- Status bar -->
+      <rect x="0" y="0" width="184" height="20" fill="transparent"/>
+      <circle cx="8" cy="10" r="3.5" fill="#2563eb"/>
+      <text x="172" y="15" font-family="monospace" font-size="11" fill="#64748b" text-anchor="end">100%</text>
+      <!-- App bar -->
+      <rect x="0" y="24" width="184" height="48" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <rect x="0" y="24" width="184" height="48" rx="0"/>
+      <!-- App bar is actually part of surface, let's redo -->
+      <!-- Top app bar background -->
+      <rect x="0" y="24" width="184" height="48" fill="#ffffff"/>
+      <text x="52" y="50" font-family="-apple-system, sans-serif" font-size="15" font-weight="600" fill="#0f172a">CredStow</text>
+      <!-- Search bar -->
+      <rect x="4" y="84" width="176" height="36" rx="18" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="32" y="107" font-family="-apple-system, sans-serif" font-size="12.5" fill="#94a3b8">Search keys…</text>
+      <circle cx="18" cy="102" r="10" fill="#64748b"/>
+      <!-- Key card 1 -->
+      <rect x="4" y="130" width="176" height="72" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <rect x="12" y="144" width="24" height="24" rx="6" fill="#eff6ff"/>
+      <text x="42" y="160" font-family="-apple-system, sans-serif" font-size="12.5" font-weight="600" fill="#0f172a">OpenAI</text>
+      <text x="42" y="176" font-family="-apple-system, sans-serif" font-size="11" fill="#94a3b8">sk-••••••••••••••••••</text>
+      <rect x="140" y="178" width="36" height="18" rx="9" fill="#dcfce7"/>
+      <text x="158" y="191" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#15803d">Valid</text>
+      <!-- Key card 2 -->
+      <rect x="4" y="212" width="176" height="72" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <rect x="12" y="226" width="24" height="24" rx="6" fill="#f0fdf4"/>
+      <text x="42" y="242" font-family="-apple-system, sans-serif" font-size="12.5" font-weight="600" fill="#0f172a">Anthropic</text>
+      <text x="42" y="258" font-family="-apple-system, sans-serif" font-size="11" fill="#94a3b8">sk-ant-•••••••••••••</text>
+      <rect x="140" y="260" width="36" height="18" rx="9" fill="#dcfce7"/>
+      <text x="154" y="273" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#15803d">Valid</text>
+      <!-- Key card 3 -->
+      <rect x="4" y="294" width="176" height="72" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <rect x="12" y="308" width="24" height="24" rx="6" fill="#fef3c7"/>
+      <text x="42" y="324" font-family="-apple-system, sans-serif" font-size="12.5" font-weight="600" fill="#0f172a">Google Gemini</text>
+      <text x="42" y="340" font-family="-apple-system, sans-serif" font-size="11" fill="#94a3b8">AIza••••••••••••••••</text>
+      <rect x="140" y="342" width="44" height="18" rx="9" fill="#f1f5f9"/>
+      <text x="162" y="355" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#64748b">Untested</text>
+      <!-- FAB -->
+      <circle cx="162" cy="420" r="26" fill="#2563eb"/>
+      <text x="162" y="426" font-family="monospace" font-size="20" fill="#fff" text-anchor="middle">+</text>
+      <!-- Bottom caption -->
+      <rect x="4" y="442" width="176" height="16" rx="8" fill="#ffffff" opacity="0.9"/>
+      <text x="92" y="454" font-family="-apple-system, sans-serif" font-size="10.5" fill="#64748b" text-anchor="middle">Free · 3 / 3 keys</text>
+    </g>
+  </g>
+</svg>
